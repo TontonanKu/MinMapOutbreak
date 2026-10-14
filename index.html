@@ -1,0 +1,2587 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mind Map Interaktif - OUTBREAK (2D Zombie Survival Shooter)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #fbf8f4;
+      --dot-color: #e4dccf;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --panel-bg: rgba(255, 255, 255, 0.95);
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --shadow-color: rgba(36, 59, 90, 0.1);
+      
+      --p1-blue: #3b82c4;
+      --p1-bg: #e8f2fb;
+      --p2-green: #4caf50;
+      --p2-bg: #ecf7ec;
+      --p3-orange: #f0a030;
+      --p3-bg: #fff4e0;
+      --p4-purple: #8b5fc7;
+      --p4-bg: #f1eafa;
+      --p5-teal: #1fa5a5;
+      --p5-bg: #e3f6f6;
+      --p6-pink: #d9577a;
+      --p6-bg: #fdeaf0;
+      --core-navy: #243b5a;
+      --core-bg: #dbeafe;
+    }
+
+    body.dark-theme {
+      --bg-color: #0b111e;
+      --dot-color: #1a2538;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --panel-bg: rgba(18, 28, 45, 0.95);
+      --card-bg: #131f33;
+      --border-color: #273752;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      
+      --p1-bg: #132742;
+      --p2-bg: #14301a;
+      --p3-bg: #362610;
+      --p4-bg: #271c3d;
+      --p5-bg: #102e2e;
+      --p6-bg: #381622;
+      --core-navy: #60a5fa;
+      --core-bg: #13243d;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Top Desktop Header */
+    .desktop-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      z-index: 1000;
+      box-shadow: 0 4px 20px var(--shadow-color);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 4px 10px 4px 6px;
+      border-radius: 12px;
+      background: var(--core-bg);
+      border: 1px solid var(--core-navy);
+      transition: transform 0.2s;
+    }
+    .brand-badge:hover { transform: scale(1.02); }
+
+    .brand-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--core-navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .brand-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--text-main);
+      line-height: 1.1;
+      letter-spacing: 0.5px;
+    }
+    .brand-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* Phase Navigation Pills */
+    .phase-nav-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      max-width: calc(100vw - 640px);
+      padding: 4px 2px;
+      scrollbar-width: none;
+    }
+    .phase-nav-bar::-webkit-scrollbar { display: none; }
+
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      background: var(--card-bg);
+      color: var(--text-main);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px var(--shadow-color);
+    }
+    .nav-pill:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    .nav-pill.p-core { border-color: var(--core-navy); background: var(--core-bg); }
+    .nav-pill.p1 { border-color: var(--p1-blue); background: var(--p1-bg); }
+    .nav-pill.p2 { border-color: var(--p2-green); background: var(--p2-bg); }
+    .nav-pill.p3 { border-color: var(--p3-orange); background: var(--p3-bg); }
+    .nav-pill.p4 { border-color: var(--p4-purple); background: var(--p4-bg); }
+    .nav-pill.p5 { border-color: var(--p5-teal); background: var(--p5-bg); }
+    .nav-pill.p6 { border-color: var(--p6-pink); background: var(--p6-bg); }
+    .nav-pill.p-bottom { border-color: #64748b; background: rgba(100, 116, 139, 0.12); }
+
+    /* Header Actions Right */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-input {
+      width: 170px;
+      height: 34px;
+      padding: 0 30px 0 32px;
+      border-radius: 17px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      width: 220px;
+      border-color: var(--core-navy);
+      box-shadow: 0 0 0 3px rgba(36, 59, 90, 0.15);
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: none;
+    }
+
+    .btn-header {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 17px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px var(--shadow-color);
+    }
+    .btn-header:hover {
+      background: var(--core-bg);
+      border-color: var(--core-navy);
+      transform: translateY(-1px);
+    }
+    .btn-header.primary-action {
+      background: var(--core-navy);
+      color: white;
+      border-color: var(--core-navy);
+      box-shadow: 0 2px 8px rgba(36, 59, 90, 0.3);
+    }
+    .btn-header.primary-action:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .icon-btn-header {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .icon-btn-header:hover {
+      background: var(--core-bg);
+      border-color: var(--core-navy);
+      transform: scale(1.05);
+    }
+
+    /* Main Viewport Container */
+    #viewport {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      cursor: grab;
+      background-color: var(--bg-color);
+      background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      transition: background-color 0.3s ease;
+    }
+    #viewport.panning {
+      cursor: grabbing;
+    }
+
+    /* The Scalable Mindmap Stage (1600x1040) */
+    #mindmap-stage {
+      position: absolute;
+      width: 1600px;
+      height: 1040px;
+      transform-origin: 0 0;
+      left: 0;
+      top: 0;
+      will-change: transform;
+      pointer-events: auto;
+    }
+
+    /* SVG Connecting Lines Layer */
+    #svg-connections {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1600px;
+      height: 1040px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Animated Flows & Pulses */
+    .flow-dash-left {
+      stroke-dasharray: 10 16;
+      animation: flowLeft 1.2s linear infinite;
+    }
+    @keyframes flowLeft {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: 52; }
+    }
+
+    .flow-dash-right {
+      stroke-dasharray: 10 16;
+      animation: flowRight 1.2s linear infinite;
+    }
+    @keyframes flowRight {
+      from { stroke-dashoffset: 52; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    .flow-dash-down {
+      stroke-dasharray: 8 12;
+      animation: flowDown 1.5s linear infinite;
+    }
+    @keyframes flowDown {
+      from { stroke-dashoffset: 40; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Outbreak Core Shockwaves */
+    @keyframes coreShockwave {
+      0% { r: 60px; opacity: 0.85; stroke-width: 4px; }
+      50% { opacity: 0.4; }
+      100% { r: 180px; opacity: 0; stroke-width: 1px; }
+    }
+    .shockwave-1 { animation: coreShockwave 3.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite; }
+    .shockwave-2 { animation: coreShockwave 3.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite 1.1s; }
+    .shockwave-3 { animation: coreShockwave 3.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite 2.2s; }
+
+    /* Floating Diamonds Animation */
+    @keyframes floatSpin {
+      0% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.25) rotate(180deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+    .animated-diamond {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: floatSpin 6s ease-in-out infinite;
+    }
+
+    /* Central Outbreak Cloud Node */
+    .core-cloud-wrapper {
+      position: absolute;
+      left: 630px;
+      top: 345px;
+      width: 340px;
+      height: 200px;
+      cursor: pointer;
+      z-index: 25;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .core-cloud-wrapper:hover {
+      transform: scale(1.03) translateY(-2px);
+    }
+    .core-cloud-wrapper:hover .core-cloud-path {
+      filter: drop-shadow(0 8px 24px rgba(36, 59, 90, 0.35));
+    }
+
+    /* Status Feature-Complete Card */
+    .status-card {
+      position: absolute;
+      left: 650px;
+      top: 600px;
+      width: 300px;
+      height: 100px;
+      box-sizing: border-box;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 2.5px solid #d9577a;
+      box-shadow: 4px 4px 0 #d9577a44;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 20;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .status-card:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 6px 6px 0 #d9577a77;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+      margin-right: 4px;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: greenPulse 1.6s infinite;
+    }
+    @keyframes greenPulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    /* Legend Card */
+    .legend-card {
+      position: absolute;
+      left: 650px;
+      top: 730px;
+      width: 300px;
+      height: 76px;
+      box-sizing: border-box;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 2px dashed #b9b0a2;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+      z-index: 20;
+      transition: all 0.2s;
+    }
+    .legend-card:hover {
+      border-color: var(--core-navy);
+      transform: translateY(-2px);
+    }
+
+    /* Phase Node Cards */
+    .phase-card {
+      position: absolute;
+      width: 210px;
+      height: 68px;
+      box-sizing: border-box;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .phase-card:hover {
+      transform: translateY(-3px) scale(1.04);
+    }
+    .phase-card:hover .phase-icon-box {
+      transform: rotate(8deg) scale(1.1);
+    }
+    .phase-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      transition: transform 0.25s ease;
+    }
+
+    /* Leaf Buttons */
+    .leaf-btn {
+      position: absolute;
+      width: 310px;
+      height: 70px;
+      box-sizing: border-box;
+      border-radius: 16px;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      display: block;
+      z-index: 20;
+      overflow: visible !important;
+      outline: none;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .leaf-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      filter: brightness(1.03);
+    }
+    .leaf-btn:active {
+      transform: translateY(0) scale(0.99);
+    }
+    .leaf-badge {
+      position: absolute;
+      top: 13px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid var(--bg-color);
+      box-sizing: border-box;
+      color: #fff;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: transform 0.25s ease;
+    }
+    .leaf-btn:hover .leaf-badge {
+      transform: scale(1.15) rotate(12deg);
+    }
+
+    /* Search Matched & Dimmed States */
+    .node-match {
+      box-shadow: 0 0 0 4px #eab308, 0 8px 24px rgba(234, 179, 8, 0.4) !important;
+      animation: searchPulse 1.2s infinite alternate !important;
+    }
+    @keyframes searchPulse {
+      from { transform: scale(1.02); filter: brightness(1.1); }
+      to { transform: scale(1.05); filter: brightness(1.2); }
+    }
+    .node-dimmed {
+      opacity: 0.25 !important;
+      filter: grayscale(80%) !important;
+      pointer-events: none;
+    }
+
+    /* Bottom Cards */
+    .bottom-card {
+      position: absolute;
+      top: 860px;
+      width: 480px;
+      height: 150px;
+      box-sizing: border-box;
+      padding: 14px 18px;
+      background: var(--card-bg);
+      border-radius: 18px;
+      border-width: 2px;
+      border-style: dashed;
+      z-index: 20;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .bottom-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px var(--shadow-color);
+    }
+    .bottom-pill {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .bottom-pill:hover {
+      transform: scale(1.05);
+    }
+
+    /* Desktop Controls Dock */
+    .desktop-dock {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 28px var(--shadow-color);
+      z-index: 900;
+    }
+    .dock-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dock-btn:hover {
+      background: var(--card-bg);
+      border-color: var(--border-color);
+      transform: scale(1.08);
+    }
+    .dock-separator {
+      width: 1px;
+      height: 20px;
+      background: var(--border-color);
+      margin: 0 2px;
+    }
+    .zoom-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 44px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    /* Mini-Map Radar */
+    .mini-map-panel {
+      position: fixed;
+      bottom: 80px;
+      right: 24px;
+      width: 220px;
+      height: 143px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      z-index: 900;
+      transition: all 0.3s ease;
+      display: none;
+    }
+    .mini-map-panel.active { display: block; }
+    .mini-map-canvas {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .mini-map-viewport-box {
+      position: absolute;
+      border: 2px solid #ef4444;
+      background: rgba(239, 68, 68, 0.15);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+
+    /* Modal Backdrop & Container */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 680px;
+      max-height: 88vh;
+      background: var(--card-bg);
+      border-radius: 24px;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.94) translateY(12px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-backdrop.open .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1.5px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    .modal-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      color: white;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header-titles {
+      flex: 1;
+      min-width: 0;
+    }
+    .modal-phase-tag {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .modal-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.15;
+    }
+
+    .modal-close-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-close-btn:hover {
+      background: #f1f5f9;
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .modal-body p {
+      font-size: 15px;
+      color: var(--text-main);
+    }
+
+    .modal-body h4 {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 8px;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .modal-body li {
+      display: flex;
+      gap: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .bullet-point {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .modal-table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+    .modal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .modal-table th {
+      background: rgba(36, 59, 90, 0.06);
+      padding: 10px 12px;
+      font-weight: 700;
+      text-align: left;
+      border-bottom: 1.5px solid var(--border-color);
+    }
+    .modal-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .modal-table tr:last-child td {
+      border-bottom: none;
+    }
+    .modal-table tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .modal-footer {
+      padding: 14px 24px;
+      border-top: 1.5px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .nav-node-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-node-btn:hover:not(:disabled) {
+      border-color: var(--core-navy);
+      background: var(--core-bg);
+      transform: translateY(-1px);
+    }
+    .nav-node-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    /* Full Report Modal Custom Styles */
+    .report-box {
+      max-width: 920px;
+      height: 90vh;
+    }
+    .report-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 24px;
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+    .report-tab-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .report-tab-btn.active {
+      background: var(--card-bg);
+      color: var(--core-navy);
+      border-color: var(--border-color);
+      box-shadow: 0 2px 4px var(--shadow-color);
+    }
+    .report-tab-btn:hover:not(.active) {
+      color: var(--text-main);
+    }
+
+    /* Sound Effect Feedback Ripple */
+    .click-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(96, 165, 250, 0.4);
+      transform: scale(0);
+      animation: rippleAnim 0.6s linear;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation Bar -->
+  <header class="desktop-header">
+    <div class="brand-section">
+      <div class="brand-badge" id="btn-brand" title="Pusat Mind Map OUTBREAK">
+        <div class="brand-icon-box">OB</div>
+        <div>
+          <div class="brand-title">OUTBREAK</div>
+          <div class="brand-sub">2D Zombie Survival · Mind Map</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase Quick-Jump Navigation Pills -->
+    <nav class="phase-nav-bar" id="phase-pills">
+      <button class="nav-pill p-core" data-jump="core">🧭 Pusat</button>
+      <button class="nav-pill p1" data-jump="p1">🟦 Fase 1: Fondasi</button>
+      <button class="nav-pill p2" data-jump="p2">🟩 Fase 2: Player</button>
+      <button class="nav-pill p3" data-jump="p3">🟧 Fase 3: Musuh</button>
+      <button class="nav-pill p4" data-jump="p4">🟪 Fase 4: Menu</button>
+      <button class="nav-pill p5" data-jump="p5">🟩 Fase 5: HUD</button>
+      <button class="nav-pill p6" data-jump="p6">🟥 Fase 6: Audio</button>
+      <button class="nav-pill p-bottom" data-jump="bottom">🟨 Roadmap & Tech</button>
+    </nav>
+
+    <!-- Header Actions Right -->
+    <div class="header-actions">
+      <!-- Search Input -->
+      <div class="search-wrapper">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="search-box" class="search-input" placeholder="Cari fitur, senjata, dll..." autocomplete="off">
+        <button id="search-clear" class="search-clear">✕</button>
+      </div>
+
+      <!-- Full Report Button -->
+      <button class="btn-header primary-action" id="btn-open-report">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <span>Laporan Lengkap</span>
+      </button>
+
+      <!-- Toggle Sound -->
+      <button class="icon-btn-header" id="btn-toggle-sound" title="Aktifkan/Nonaktifkan Suara Prosedural SFX">
+        <svg id="icon-sound-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        <svg id="icon-sound-off" style="display:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+      </button>
+
+      <!-- Toggle Theme -->
+      <button class="icon-btn-header" id="btn-toggle-theme" title="Ubah Tema (Dark / Light)">
+        <svg id="icon-theme-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg id="icon-theme-moon" style="display:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+
+      <!-- Fullscreen Button -->
+      <button class="icon-btn-header" id="btn-toggle-fullscreen" title="Layar Penuh (Fullscreen)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Interactive Pan-Zoom Viewport -->
+  <main id="viewport">
+    <div id="mindmap-stage">
+
+      <!-- SVG Connections, Flows & Pulses -->
+      <svg id="svg-connections" viewBox="0 0 1600 1040" fill="none">
+        <defs>
+          <!-- Gradients for Flowing Pulses -->
+          <linearGradient id="grad-p1" x1="1" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#2563eb" stop-opacity="0.2" />
+            <stop offset="50%" stop-color="#60a5fa" stop-opacity="1" />
+            <stop offset="100%" stop-color="#93c5fd" stop-opacity="0.8" />
+          </linearGradient>
+          <linearGradient id="grad-p2" x1="1" y1="0.5" x2="0" y2="0.5">
+            <stop offset="0%" stop-color="#16a34a" stop-opacity="0.2" />
+            <stop offset="50%" stop-color="#4ade80" stop-opacity="1" />
+            <stop offset="100%" stop-color="#bbf7d0" stop-opacity="0.8" />
+          </linearGradient>
+          <linearGradient id="grad-p3" x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#d97706" stop-opacity="0.2" />
+            <stop offset="50%" stop-color="#fbbf24" stop-opacity="1" />
+            <stop offset="100%" stop-color="#fef08a" stop-opacity="0.8" />
+          </linearGradient>
+          <linearGradient id="grad-p4" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.2" />
+            <stop offset="50%" stop-color="#c084fc" stop-opacity="1" />
+            <stop offset="100%" stop-color="#e9d5ff" stop-opacity="0.8" />
+          </linearGradient>
+          <linearGradient id="grad-p5" x1="0" y1="0.5" x2="1" y2="0.5">
+            <stop offset="0%" stop-color="#0891b2" stop-opacity="0.2" />
+            <stop offset="50%" stop-color="#22d3ee" stop-opacity="1" />
+            <stop offset="100%" stop-color="#a5f3fc" stop-opacity="0.8" />
+          </linearGradient>
+          <linearGradient id="grad-p6" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e11d48" stop-opacity="0.2" />
+            <stop offset="50%" stop-color="#fb7185" stop-opacity="1" />
+            <stop offset="100%" stop-color="#fecdd3" stop-opacity="0.8" />
+          </linearGradient>
+          <linearGradient id="grad-bottom" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#64748b" stop-opacity="0.3" />
+            <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.7" />
+          </linearGradient>
+
+          <!-- Glow Filter -->
+          <filter id="glow-light" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        <!-- Outbreak Shockwaves Radiating from Core Center (800, 450) -->
+        <g stroke="#3b82c4" fill="none">
+          <circle cx="800" cy="450" class="shockwave-1" />
+          <circle cx="800" cy="450" class="shockwave-2" stroke="#d9577a" />
+          <circle cx="800" cy="450" class="shockwave-3" stroke="#4caf50" />
+        </g>
+
+        <!-- FASE 1 (Blue) Base & Animated Flow -->
+        <g stroke="#3b82c4" stroke-linecap="round">
+          <!-- Base Static Lines -->
+          <path id="path-main-p1" d="M650,450 C620,450 625,185 595,185" stroke-width="5" stroke-opacity="0.45" />
+          <path id="path-sub1-1" d="M385,185 C368,185 368,105 350,105" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub1-2" d="M385,185 C368,185 368,185 350,185" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub1-3" d="M385,185 C368,185 368,265 350,265" stroke-width="3" stroke-opacity="0.45" />
+
+          <!-- Flowing Pulse Overlays -->
+          <path d="M650,450 C620,450 625,185 595,185" stroke="url(#grad-p1)" stroke-width="4.5" class="flow-dash-left" filter="url(#glow-light)" />
+          <path d="M385,185 C368,185 368,105 350,105" stroke="url(#grad-p1)" stroke-width="3" class="flow-dash-left" />
+          <path d="M385,185 C368,185 368,185 350,185" stroke="url(#grad-p1)" stroke-width="3" class="flow-dash-left" />
+          <path d="M385,185 C368,185 368,265 350,265" stroke="url(#grad-p1)" stroke-width="3" class="flow-dash-left" />
+
+          <!-- Travelling Energy Sparks -->
+          <circle r="4" fill="#93c5fd" filter="url(#glow-light)">
+            <animateMotion dur="2.2s" repeatCount="indefinite" path="M650,450 C620,450 625,185 595,185" />
+          </circle>
+          <circle r="3" fill="#60a5fa">
+            <animateMotion dur="2.2s" begin="1.1s" repeatCount="indefinite" path="M650,450 C620,450 625,185 595,185" />
+          </circle>
+          <circle r="3" fill="#60a5fa">
+            <animateMotion dur="1.3s" repeatCount="indefinite" path="M385,185 C368,185 368,105 350,105" />
+          </circle>
+          <circle r="3" fill="#60a5fa">
+            <animateMotion dur="1.3s" begin="0.4s" repeatCount="indefinite" path="M385,185 C368,185 368,185 350,185" />
+          </circle>
+          <circle r="3" fill="#60a5fa">
+            <animateMotion dur="1.3s" begin="0.8s" repeatCount="indefinite" path="M385,185 C368,185 368,265 350,265" />
+          </circle>
+        </g>
+
+        <!-- FASE 2 (Green) Base & Animated Flow -->
+        <g stroke="#4caf50" stroke-linecap="round">
+          <!-- Base Static Lines -->
+          <path id="path-main-p2" d="M650,450 C620,450 625,445 595,445" stroke-width="5" stroke-opacity="0.45" />
+          <path id="path-sub2-1" d="M385,445 C368,445 368,365 350,365" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub2-2" d="M385,445 C368,445 368,445 350,445" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub2-3" d="M385,445 C368,445 368,525 350,525" stroke-width="3" stroke-opacity="0.45" />
+
+          <!-- Flowing Pulse Overlays -->
+          <path d="M650,450 C620,450 625,445 595,445" stroke="url(#grad-p2)" stroke-width="4.5" class="flow-dash-left" filter="url(#glow-light)" />
+          <path d="M385,445 C368,445 368,365 350,365" stroke="url(#grad-p2)" stroke-width="3" class="flow-dash-left" />
+          <path d="M385,445 C368,445 368,445 350,445" stroke="url(#grad-p2)" stroke-width="3" class="flow-dash-left" />
+          <path d="M385,445 C368,445 368,525 350,525" stroke="url(#grad-p2)" stroke-width="3" class="flow-dash-left" />
+
+          <!-- Travelling Energy Sparks -->
+          <circle r="4" fill="#bbf7d0" filter="url(#glow-light)">
+            <animateMotion dur="2.0s" repeatCount="indefinite" path="M650,450 C620,450 625,445 595,445" />
+          </circle>
+          <circle r="3" fill="#4ade80">
+            <animateMotion dur="2.0s" begin="1.0s" repeatCount="indefinite" path="M650,450 C620,450 625,445 595,445" />
+          </circle>
+          <circle r="3" fill="#4ade80">
+            <animateMotion dur="1.3s" repeatCount="indefinite" path="M385,445 C368,445 368,365 350,365" />
+          </circle>
+          <circle r="3" fill="#4ade80">
+            <animateMotion dur="1.3s" begin="0.4s" repeatCount="indefinite" path="M385,445 C368,445 368,445 350,445" />
+          </circle>
+          <circle r="3" fill="#4ade80">
+            <animateMotion dur="1.3s" begin="0.8s" repeatCount="indefinite" path="M385,445 C368,445 368,525 350,525" />
+          </circle>
+        </g>
+
+        <!-- FASE 3 (Orange) Base & Animated Flow -->
+        <g stroke="#f0a030" stroke-linecap="round">
+          <!-- Base Static Lines -->
+          <path id="path-main-p3" d="M650,450 C620,450 625,705 595,705" stroke-width="5" stroke-opacity="0.45" />
+          <path id="path-sub3-1" d="M385,705 C368,705 368,625 350,625" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub3-2" d="M385,705 C368,705 368,705 350,705" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub3-3" d="M385,705 C368,705 368,785 350,785" stroke-width="3" stroke-opacity="0.45" />
+
+          <!-- Flowing Pulse Overlays -->
+          <path d="M650,450 C620,450 625,705 595,705" stroke="url(#grad-p3)" stroke-width="4.5" class="flow-dash-left" filter="url(#glow-light)" />
+          <path d="M385,705 C368,705 368,625 350,625" stroke="url(#grad-p3)" stroke-width="3" class="flow-dash-left" />
+          <path d="M385,705 C368,705 368,705 350,705" stroke="url(#grad-p3)" stroke-width="3" class="flow-dash-left" />
+          <path d="M385,705 C368,705 368,785 350,785" stroke="url(#grad-p3)" stroke-width="3" class="flow-dash-left" />
+
+          <!-- Travelling Energy Sparks -->
+          <circle r="4" fill="#fef08a" filter="url(#glow-light)">
+            <animateMotion dur="2.3s" repeatCount="indefinite" path="M650,450 C620,450 625,705 595,705" />
+          </circle>
+          <circle r="3" fill="#fbbf24">
+            <animateMotion dur="2.3s" begin="1.15s" repeatCount="indefinite" path="M650,450 C620,450 625,705 595,705" />
+          </circle>
+          <circle r="3" fill="#fbbf24">
+            <animateMotion dur="1.3s" repeatCount="indefinite" path="M385,705 C368,705 368,625 350,625" />
+          </circle>
+          <circle r="3" fill="#fbbf24">
+            <animateMotion dur="1.3s" begin="0.4s" repeatCount="indefinite" path="M385,705 C368,705 368,705 350,705" />
+          </circle>
+          <circle r="3" fill="#fbbf24">
+            <animateMotion dur="1.3s" begin="0.8s" repeatCount="indefinite" path="M385,705 C368,705 368,785 350,785" />
+          </circle>
+        </g>
+
+        <!-- FASE 4 (Purple) Base & Animated Flow -->
+        <g stroke="#8b5fc7" stroke-linecap="round">
+          <!-- Base Static Lines -->
+          <path id="path-main-p4" d="M950,450 C980,450 975,185 1005,185" stroke-width="5" stroke-opacity="0.45" />
+          <path id="path-sub4-1" d="M1215,185 C1232,185 1232,105 1250,105" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub4-2" d="M1215,185 C1232,185 1232,185 1250,185" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub4-3" d="M1215,185 C1232,185 1232,265 1250,265" stroke-width="3" stroke-opacity="0.45" />
+
+          <!-- Flowing Pulse Overlays -->
+          <path d="M950,450 C980,450 975,185 1005,185" stroke="url(#grad-p4)" stroke-width="4.5" class="flow-dash-right" filter="url(#glow-light)" />
+          <path d="M1215,185 C1232,185 1232,105 1250,105" stroke="url(#grad-p4)" stroke-width="3" class="flow-dash-right" />
+          <path d="M1215,185 C1232,185 1232,185 1250,185" stroke="url(#grad-p4)" stroke-width="3" class="flow-dash-right" />
+          <path d="M1215,185 C1232,185 1232,265 1250,265" stroke="url(#grad-p4)" stroke-width="3" class="flow-dash-right" />
+
+          <!-- Travelling Energy Sparks -->
+          <circle r="4" fill="#e9d5ff" filter="url(#glow-light)">
+            <animateMotion dur="2.2s" repeatCount="indefinite" path="M950,450 C980,450 975,185 1005,185" />
+          </circle>
+          <circle r="3" fill="#c084fc">
+            <animateMotion dur="2.2s" begin="1.1s" repeatCount="indefinite" path="M950,450 C980,450 975,185 1005,185" />
+          </circle>
+          <circle r="3" fill="#c084fc">
+            <animateMotion dur="1.3s" repeatCount="indefinite" path="M1215,185 C1232,185 1232,105 1250,105" />
+          </circle>
+          <circle r="3" fill="#c084fc">
+            <animateMotion dur="1.3s" begin="0.4s" repeatCount="indefinite" path="M1215,185 C1232,185 1232,185 1250,185" />
+          </circle>
+          <circle r="3" fill="#c084fc">
+            <animateMotion dur="1.3s" begin="0.8s" repeatCount="indefinite" path="M1215,185 C1232,185 1232,265 1250,265" />
+          </circle>
+        </g>
+
+        <!-- FASE 5 (Teal) Base & Animated Flow -->
+        <g stroke="#1fa5a5" stroke-linecap="round">
+          <!-- Base Static Lines -->
+          <path id="path-main-p5" d="M950,450 C980,450 975,445 1005,445" stroke-width="5" stroke-opacity="0.45" />
+          <path id="path-sub5-1" d="M1215,445 C1232,445 1232,365 1250,365" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub5-2" d="M1215,445 C1232,445 1232,445 1250,445" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub5-3" d="M1215,445 C1232,445 1232,525 1250,525" stroke-width="3" stroke-opacity="0.45" />
+
+          <!-- Flowing Pulse Overlays -->
+          <path d="M950,450 C980,450 975,445 1005,445" stroke="url(#grad-p5)" stroke-width="4.5" class="flow-dash-right" filter="url(#glow-light)" />
+          <path d="M1215,445 C1232,445 1232,365 1250,365" stroke="url(#grad-p5)" stroke-width="3" class="flow-dash-right" />
+          <path d="M1215,445 C1232,445 1232,445 1250,445" stroke="url(#grad-p5)" stroke-width="3" class="flow-dash-right" />
+          <path d="M1215,445 C1232,445 1232,525 1250,525" stroke="url(#grad-p5)" stroke-width="3" class="flow-dash-right" />
+
+          <!-- Travelling Energy Sparks -->
+          <circle r="4" fill="#a5f3fc" filter="url(#glow-light)">
+            <animateMotion dur="2.0s" repeatCount="indefinite" path="M950,450 C980,450 975,445 1005,445" />
+          </circle>
+          <circle r="3" fill="#22d3ee">
+            <animateMotion dur="2.0s" begin="1.0s" repeatCount="indefinite" path="M950,450 C980,450 975,445 1005,445" />
+          </circle>
+          <circle r="3" fill="#22d3ee">
+            <animateMotion dur="1.3s" repeatCount="indefinite" path="M1215,445 C1232,445 1232,365 1250,365" />
+          </circle>
+          <circle r="3" fill="#22d3ee">
+            <animateMotion dur="1.3s" begin="0.4s" repeatCount="indefinite" path="M1215,445 C1232,445 1232,445 1250,445" />
+          </circle>
+          <circle r="3" fill="#22d3ee">
+            <animateMotion dur="1.3s" begin="0.8s" repeatCount="indefinite" path="M1215,445 C1232,445 1232,525 1250,525" />
+          </circle>
+        </g>
+
+        <!-- FASE 6 (Pink/Crimson) Base & Animated Flow -->
+        <g stroke="#d9577a" stroke-linecap="round">
+          <!-- Base Static Lines -->
+          <path id="path-main-p6" d="M950,450 C980,450 975,705 1005,705" stroke-width="5" stroke-opacity="0.45" />
+          <path id="path-sub6-1" d="M1215,705 C1232,705 1232,625 1250,625" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub6-2" d="M1215,705 C1232,705 1232,705 1250,705" stroke-width="3" stroke-opacity="0.45" />
+          <path id="path-sub6-3" d="M1215,705 C1232,705 1232,785 1250,785" stroke-width="3" stroke-opacity="0.45" />
+
+          <!-- Flowing Pulse Overlays -->
+          <path d="M950,450 C980,450 975,705 1005,705" stroke="url(#grad-p6)" stroke-width="4.5" class="flow-dash-right" filter="url(#glow-light)" />
+          <path d="M1215,705 C1232,705 1232,625 1250,625" stroke="url(#grad-p6)" stroke-width="3" class="flow-dash-right" />
+          <path d="M1215,705 C1232,705 1232,705 1250,705" stroke="url(#grad-p6)" stroke-width="3" class="flow-dash-right" />
+          <path d="M1215,705 C1232,705 1232,785 1250,785" stroke="url(#grad-p6)" stroke-width="3" class="flow-dash-right" />
+
+          <!-- Travelling Energy Sparks -->
+          <circle r="4" fill="#fecdd3" filter="url(#glow-light)">
+            <animateMotion dur="2.3s" repeatCount="indefinite" path="M950,450 C980,450 975,705 1005,705" />
+          </circle>
+          <circle r="3" fill="#fb7185">
+            <animateMotion dur="2.3s" begin="1.15s" repeatCount="indefinite" path="M950,450 C980,450 975,705 1005,705" />
+          </circle>
+          <circle r="3" fill="#fb7185">
+            <animateMotion dur="1.3s" repeatCount="indefinite" path="M1215,705 C1232,705 1232,625 1250,625" />
+          </circle>
+          <circle r="3" fill="#fb7185">
+            <animateMotion dur="1.3s" begin="0.4s" repeatCount="indefinite" path="M1215,705 C1232,705 1232,705 1250,705" />
+          </circle>
+          <circle r="3" fill="#fb7185">
+            <animateMotion dur="1.3s" begin="0.8s" repeatCount="indefinite" path="M1215,705 C1232,705 1232,785 1250,785" />
+          </circle>
+        </g>
+
+        <!-- Downward Flows to Bottom Cards -->
+        <g stroke="url(#grad-bottom)" stroke-linecap="round">
+          <path d="M800,806 C800,835 280,830 280,860" stroke-width="2.5" class="flow-dash-down" stroke-opacity="0.6" />
+          <path d="M800,806 C800,835 800,830 800,860" stroke-width="2.5" class="flow-dash-down" stroke-opacity="0.6" />
+          <path d="M800,806 C800,835 1320,830 1320,860" stroke-width="2.5" class="flow-dash-down" stroke-opacity="0.6" />
+          <circle r="3" fill="#f59e0b">
+            <animateMotion dur="2s" repeatCount="indefinite" path="M800,806 C800,835 280,830 280,860" />
+          </circle>
+          <circle r="3" fill="#38bdf8">
+            <animateMotion dur="2s" repeatCount="indefinite" path="M800,806 C800,835 800,830 800,860" />
+          </circle>
+          <circle r="3" fill="#a855f7">
+            <animateMotion dur="2s" repeatCount="indefinite" path="M800,806 C800,835 1320,830 1320,860" />
+          </circle>
+        </g>
+
+        <!-- Central Cloud Shape (Visual path) -->
+        <path d="M85 170 C45 170 25 140 45 115 C20 90 45 55 80 62 C90 25 140 15 165 40 C185 10 245 15 255 55 C295 50 320 85 295 112 C320 140 300 172 262 168 C240 190 200 195 175 178 C150 195 110 192 85 170 Z" 
+              transform="translate(630,345)" fill="var(--core-bg)" stroke="var(--core-navy)" stroke-width="4" stroke-linejoin="round" class="core-cloud-path"></path>
+
+        <!-- Decorative Animated Sparkle Diamonds -->
+        <path class="animated-diamond" transform="translate(615,320) scale(1.4)" d="M0,-10 L2.5,-2.5 L10,0 L2.5,2.5 L0,10 L-2.5,2.5 L-10,0 L-2.5,-2.5Z" fill="#f0a030" stroke="none"></path>
+        <path class="animated-diamond" transform="translate(992,318) scale(1.2)" d="M0,-10 L2.5,-2.5 L10,0 L2.5,2.5 L0,10 L-2.5,2.5 L-10,0 L-2.5,-2.5Z" fill="#d9577a" stroke="none"></path>
+        <path class="animated-diamond" transform="translate(1000,575) scale(1.1)" d="M0,-10 L2.5,-2.5 L10,0 L2.5,2.5 L0,10 L-2.5,2.5 L-10,0 L-2.5,-2.5Z" fill="#1fa5a5" stroke="none"></path>
+        <path class="animated-diamond" transform="translate(606,575) scale(1)" d="M0,-10 L2.5,-2.5 L10,0 L2.5,2.5 L0,10 L-2.5,2.5 L-10,0 L-2.5,-2.5Z" fill="#8b5fc7" stroke="none"></path>
+      </svg>
+
+      <!-- HTML Nodes Layer -->
+
+      <!-- CENTER CORE: OUTBREAK -->
+      <div style="position:absolute;left:650px;top:296px;width:300px;height:34px;box-sizing:border-box;border-radius:17px;background:var(--core-navy);color:#fff;font-size:14px;font-weight:700;letter-spacing:1.5px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(36,59,90,0.3);z-index:22">
+        LAPORAN PERKEMBANGAN PROYEK
+      </div>
+
+      <div class="core-cloud-wrapper" onclick="openNode(0)" title="Klik untuk membuka detail game OUTBREAK">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:20px">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--core-navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="11" rx="5.5"></rect>
+            <path d="M7 10.5v4M5 12.5h4"></path>
+            <circle cx="15.5" cy="11.5" r="1" fill="currentColor"></circle>
+            <circle cx="18" cy="14" r="1" fill="currentColor"></circle>
+          </svg>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:42px;font-weight:800;color:var(--core-navy);letter-spacing:1px;line-height:1.05">OUTBREAK</div>
+          <div style="font-size:18px;font-weight:700;color:var(--core-navy)">2D Zombie Survival Shooter</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text-muted)">Unity 6 · C# · PC &amp; Android-ready</div>
+        </div>
+      </div>
+
+      <!-- Feature-Complete Status Card -->
+      <div class="status-card" onclick="openNode(0)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:1.5px;color:#b8325a">
+          <span class="pulse-dot"></span>
+          STATUS PROYEK
+        </div>
+        <div style="font-family:'Baloo 2',sans-serif;font-size:26px;font-weight:800;color:var(--text-main);line-height:1.2">Feature-complete</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text-muted)">Loop utuh: menu → misi → reward</div>
+      </div>
+
+      <!-- Legend Card -->
+      <div class="legend-card" onclick="openReport()">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--core-navy);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex:none">5</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.3">
+          <strong>Angka di lingkaran = nilai kunci fitur.</strong> Klik kartu untuk membuka detail lengkap.
+        </div>
+      </div>
+
+      <!-- 6 PHASE NODES -->
+      <!-- Fase 1: Fondasi Sistem -->
+      <div class="phase-card" style="left:385px;top:151px;background:#d6e8f8;border:3px solid #3b82c4;box-shadow:4px 4px 0 #3b82c4;" onclick="openNode(1)">
+        <div class="phase-icon-box" style="background:#3b82c4;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#555">FASE 1</div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:#222;line-height:1.1">Fondasi Sistem</div>
+        </div>
+      </div>
+
+      <!-- Fase 2: Player & Senjata -->
+      <div class="phase-card" style="left:385px;top:411px;background:#daf0db;border:3px solid #4caf50;box-shadow:4px 4px 0 #4caf50;" onclick="openNode(4)">
+        <div class="phase-icon-box" style="background:#4caf50;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 2v5M12 17v5M2 12h5M17 12h5"></path></svg>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#555">FASE 2</div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:#222;line-height:1.1">Player &amp; Senjata</div>
+        </div>
+      </div>
+
+      <!-- Fase 3: Musuh & Drop -->
+      <div class="phase-card" style="left:385px;top:671px;background:#fde8c4;border:3px solid #f0a030;box-shadow:4px 4px 0 #f0a030;" onclick="openNode(7)">
+        <div class="phase-icon-box" style="background:#f0a030;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a8 8 0 0 0-8 8c0 2.5 1.2 4.4 3 5.6V20h10v-3.4c1.8-1.2 3-3.1 3-5.6a8 8 0 0 0-8-8z"></path><circle cx="9" cy="11" r="1.6"></circle><circle cx="15" cy="11" r="1.6"></circle><path d="M10 20v-2M14 20v-2"></path></svg>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#555">FASE 3</div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:#222;line-height:1.1">Musuh &amp; Drop</div>
+        </div>
+      </div>
+
+      <!-- Fase 4: Menu Utama -->
+      <div class="phase-card" style="left:1005px;top:151px;background:#e6dcf5;border:3px solid #8b5fc7;box-shadow:4px 4px 0 #8b5fc7;" onclick="openNode(10)">
+        <div class="phase-icon-box" style="background:#8b5fc7;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#555">FASE 4</div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:#222;line-height:1.1">Menu Utama</div>
+        </div>
+      </div>
+
+      <!-- Fase 5: HUD & Pause -->
+      <div class="phase-card" style="left:1005px;top:411px;background:#cdeeee;border:3px solid #1fa5a5;box-shadow:4px 4px 0 #1fa5a5;" onclick="openNode(13)">
+        <div class="phase-icon-box" style="background:#1fa5a5;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M10 9v6M14 9v6"></path></svg>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#555">FASE 5</div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:#222;line-height:1.1">HUD &amp; Pause</div>
+        </div>
+      </div>
+
+      <!-- Fase 6: Mesin Audio -->
+      <div class="phase-card" style="left:1005px;top:671px;background:#fbdbe5;border:3px solid #d9577a;box-shadow:4px 4px 0 #d9577a;" onclick="openNode(16)">
+        <div class="phase-icon-box" style="background:#d9577a;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"></path><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"></path></svg>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#555">FASE 6</div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:#222;line-height:1.1">Mesin Audio</div>
+        </div>
+      </div>
+
+      <!-- 18 LEAF NODES -->
+      <!-- Leaf 1: Struktur folder -->
+      <button class="leaf-btn node-btn" id="node-btn-1" onclick="openNode(1)" style="left:40px;top:70px;padding:9px 34px 9px 16px;background:var(--p1-bg);border:2px solid var(--p1-blue);box-shadow:3px 3px 0 var(--p1-blue)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Struktur folder</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Assets/_Project: Art, Prefabs, Scripts</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p1-blue);font-size:17px">6</div>
+      </button>
+
+      <!-- Leaf 2: Canvas 1920x1080 -->
+      <button class="leaf-btn node-btn" id="node-btn-2" onclick="openNode(2)" style="left:40px;top:150px;padding:9px 34px 9px 16px;background:var(--p1-bg);border:2px solid var(--p1-blue);box-shadow:3px 3px 0 var(--p1-blue)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Canvas 1920×1080</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Match 0.5, UI tidak gepeng</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p1-blue);font-size:12px">16:9</div>
+      </button>
+
+      <!-- Leaf 3: Font Inter-Black SDF -->
+      <button class="leaf-btn node-btn" id="node-btn-3" onclick="openNode(3)" style="left:40px;top:230px;padding:9px 34px 9px 16px;background:var(--p1-bg);border:2px solid var(--p1-blue);box-shadow:3px 3px 0 var(--p1-blue)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Font Inter-Black SDF</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Teks tajam di semua resolusi</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p1-blue);font-size:12px">SDF</div>
+      </button>
+
+      <!-- Leaf 4: Gerak 8 arah -->
+      <button class="leaf-btn node-btn" id="node-btn-4" onclick="openNode(4)" style="left:40px;top:330px;padding:9px 34px 9px 16px;background:var(--p2-bg);border:2px solid var(--p2-green);box-shadow:3px 3px 0 var(--p2-green)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Gerak 8 arah</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">New Input System + animasi sprite</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p2-green);font-size:17px">8</div>
+      </button>
+
+      <!-- Leaf 5: Tembak presisi -->
+      <button class="leaf-btn node-btn" id="node-btn-5" onclick="openNode(5)" style="left:40px;top:410px;padding:9px 34px 9px 16px;background:var(--p2-bg);border:2px solid var(--p2-green);box-shadow:3px 3px 0 var(--p2-green)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Tembak presisi</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Peluru keluar dari moncong, reload R</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p2-green);font-size:17px">R</div>
+      </button>
+
+      <!-- Leaf 6: 5 jenis senjata -->
+      <button class="leaf-btn node-btn" id="node-btn-6" onclick="openNode(6)" style="left:40px;top:490px;padding:9px 34px 9px 16px;background:var(--p2-bg);border:2px solid var(--p2-green);box-shadow:3px 3px 0 var(--p2-green)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">5 jenis senjata</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Revolver, SMG, Shotgun, AR, Sniper</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p2-green);font-size:17px">5</div>
+      </button>
+
+      <!-- Leaf 7: AI Zombie -->
+      <button class="leaf-btn node-btn" id="node-btn-7" onclick="openNode(7)" style="left:40px;top:590px;padding:9px 34px 9px 16px;background:var(--p3-bg);border:2px solid var(--p3-orange);box-shadow:3px 3px 0 var(--p3-orange)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">AI Zombie</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">FSM 3 status: Chase, Attack, Hurt</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p3-orange);font-size:17px">3</div>
+      </button>
+
+      <!-- Leaf 8: Spawner Gelombang -->
+      <button class="leaf-btn node-btn" id="node-btn-8" onclick="openNode(8)" style="left:40px;top:670px;padding:9px 34px 9px 16px;background:var(--p3-bg);border:2px solid var(--p3-orange);box-shadow:3px 3px 0 var(--p3-orange)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Spawner Gelombang</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Spawn dinamis di luar radius kamera</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p3-orange);font-size:17px">∞</div>
+      </button>
+
+      <!-- Leaf 9: Health Drop Magnet -->
+      <button class="leaf-btn node-btn" id="node-btn-9" onclick="openNode(9)" style="left:40px;top:750px;padding:9px 34px 9px 16px;background:var(--p3-bg);border:2px solid var(--p3-orange);box-shadow:3px 3px 0 var(--p3-orange)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Health Drop Magnet</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Tersedot saat dekat, +25 HP</div>
+        <div class="leaf-badge" style="right:-18px;background:var(--p3-orange);font-size:17px">+</div>
+      </button>
+
+      <!-- Leaf 10: 5 misi berjenjang -->
+      <button class="leaf-btn node-btn" id="node-btn-10" onclick="openNode(10)" style="left:1250px;top:70px;padding:9px 16px 9px 34px;background:var(--p4-bg);border:2px solid var(--p4-purple);box-shadow:3px 3px 0 var(--p4-purple)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">5 misi berjenjang</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Easy sampai Nightmare, kunci bertingkat</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p4-purple);font-size:17px">5</div>
+      </button>
+
+      <!-- Leaf 11: Heroes & Guns -->
+      <button class="leaf-btn node-btn" id="node-btn-11" onclick="openNode(11)" style="left:1250px;top:150px;padding:9px 16px 9px 34px;background:var(--p4-bg);border:2px solid var(--p4-purple);box-shadow:3px 3px 0 var(--p4-purple)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Heroes &amp; Guns</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">3 hero, bar statistik, beli pakai koin</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p4-purple);font-size:17px">3</div>
+      </button>
+
+      <!-- Leaf 12: Settings & Daily -->
+      <button class="leaf-btn node-btn" id="node-btn-12" onclick="openNode(12)" style="left:1250px;top:230px;padding:9px 16px 9px 34px;background:var(--p4-bg);border:2px solid var(--p4-purple);box-shadow:3px 3px 0 var(--p4-purple)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Settings &amp; Daily</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">SFX, BGM, HD 60/30 FPS, hadiah 7 hari</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p4-purple);font-size:17px">7</div>
+      </button>
+
+      <!-- Leaf 13: HUD in-game -->
+      <button class="leaf-btn node-btn" id="node-btn-13" onclick="openNode(13)" style="left:1250px;top:330px;padding:9px 16px 9px 34px;background:var(--p5-bg);border:2px solid var(--p5-teal);box-shadow:3px 3px 0 var(--p5-teal)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">HUD in-game</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Darah, amunisi, ikon senjata, panel misi</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p5-teal);font-size:17px">2</div>
+      </button>
+
+      <!-- Leaf 14: Menu pause -->
+      <button class="leaf-btn node-btn" id="node-btn-14" onclick="openNode(14)" style="left:1250px;top:410px;padding:9px 16px 9px 34px;background:var(--p5-bg);border:2px solid var(--p5-teal);box-shadow:3px 3px 0 var(--p5-teal)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Menu pause</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Main Menu · Restart · Resume</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p5-teal);font-size:17px">3</div>
+      </button>
+
+      <!-- Leaf 15: Victory & Game Over -->
+      <button class="leaf-btn node-btn" id="node-btn-15" onclick="openNode(15)" style="left:1250px;top:490px;padding:9px 16px 9px 34px;background:var(--p5-bg);border:2px solid var(--p5-teal);box-shadow:3px 3px 0 var(--p5-teal)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Victory &amp; Game Over</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Reward koin, lanjut misi, retry</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p5-teal);font-size:17px">2</div>
+      </button>
+
+      <!-- Leaf 16: AudioManager -->
+      <button class="leaf-btn node-btn" id="node-btn-16" onclick="openNode(16)" style="left:1250px;top:590px;padding:9px 16px 9px 34px;background:var(--p6-bg);border:2px solid var(--p6-pink);box-shadow:3px 3px 0 var(--p6-pink)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">AudioManager</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Singleton, tak putus antar scene</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p6-pink);font-size:17px">1</div>
+      </button>
+
+      <!-- Leaf 17: Synth prosedural -->
+      <button class="leaf-btn node-btn" id="node-btn-17" onclick="openNode(17)" style="left:1250px;top:670px;padding:9px 16px 9px 34px;background:var(--p6-bg);border:2px solid var(--p6-pink);box-shadow:3px 3px 0 var(--p6-pink)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Synth prosedural</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">Klik, tembakan, hurt, BGM tanpa file</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p6-pink);font-size:17px">4</div>
+      </button>
+
+      <!-- Leaf 18: Volume dinormalisasi -->
+      <button class="leaf-btn node-btn" id="node-btn-18" onclick="openNode(18)" style="left:1250px;top:750px;padding:9px 16px 9px 34px;background:var(--p6-bg);border:2px solid var(--p6-pink);box-shadow:3px 3px 0 var(--p6-pink)55;">
+        <div style="font-weight:700;font-size:19px;color:var(--text-main);line-height:1.15">Volume dinormalisasi</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:2px">SFX 0.95 · BGM 0.75</div>
+        <div class="leaf-badge" style="left:-18px;background:var(--p6-pink);font-size:12px">.95</div>
+      </button>
+
+      <!-- 3 BOTTOM CARDS (Node 19, 20, 21) -->
+      <!-- Node 19: Teknologi -->
+      <div class="bottom-card node-btn" id="node-btn-19" onclick="openNode(19)" style="left:40px;border-color:#3b82c4">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:30px;height:30px;border-radius:50%;background:#3b82c4;display:flex;align-items:center;justify-content:center;color:#fff">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13 6l-2 12"></path></svg>
+          </div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:19px;font-weight:800;color:var(--p1-blue)">Teknologi &amp; Engine</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span class="bottom-pill" style="background:var(--p1-bg);border:1.5px solid var(--p1-blue);color:var(--text-main)">Unity 6 LTS</span>
+          <span class="bottom-pill" style="background:var(--p1-bg);border:1.5px solid var(--p1-blue);color:var(--text-main)">C# / .NET</span>
+          <span class="bottom-pill" style="background:var(--p1-bg);border:1.5px solid var(--p1-blue);color:var(--text-main)">New Input System</span>
+          <span class="bottom-pill" style="background:var(--p1-bg);border:1.5px solid var(--p1-blue);color:var(--text-main)">UGUI + TextMeshPro</span>
+          <span class="bottom-pill" style="background:var(--p1-bg);border:1.5px solid var(--p1-blue);color:var(--text-main)">Singleton + PlayerPrefs</span>
+          <span class="bottom-pill" style="background:var(--p1-bg);border:1.5px solid var(--p1-blue);color:var(--text-main)">PC &amp; Android-ready</span>
+        </div>
+      </div>
+
+      <!-- Node 20: Hasil Pengujian -->
+      <div class="bottom-card node-btn" id="node-btn-20" onclick="openNode(20)" style="left:560px;border-color:#4caf50">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:30px;height:30px;border-radius:50%;background:#4caf50;display:flex;align-items:center;justify-content:center;color:#fff">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l3 3 5-6"></path></svg>
+          </div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:19px;font-weight:800;color:var(--p2-green)">Hasil Pengujian &amp; QA</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span class="bottom-pill" style="background:var(--p2-bg);border:1.5px solid var(--p2-green);color:var(--text-main)">Build 0 Error</span>
+          <span class="bottom-pill" style="background:var(--p2-bg);border:1.5px solid var(--p2-green);color:var(--text-main)">Editor 0 Error</span>
+          <span class="bottom-pill" style="background:var(--p2-bg);border:1.5px solid var(--p2-green);color:var(--text-main)">Navigasi 6 Popup Mulus</span>
+          <span class="bottom-pill" style="background:var(--p2-bg);border:1.5px solid var(--p2-green);color:var(--text-main)">Data Tersimpan</span>
+          <span class="bottom-pill" style="background:var(--p2-bg);border:1.5px solid var(--p2-green);color:var(--text-main)">1920x1080 (16:9)</span>
+          <span class="bottom-pill" style="background:var(--p2-bg);border:1.5px solid var(--p2-green);color:var(--text-main)">Audio SFX &amp; BGM Normal</span>
+        </div>
+      </div>
+
+      <!-- Node 21: Rencana Lanjutan -->
+      <div class="bottom-card node-btn" id="node-btn-21" onclick="openNode(21)" style="left:1080px;border-color:#f0a030">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:30px;height:30px;border-radius:50%;background:#f0a030;display:flex;align-items:center;justify-content:center;color:#fff">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:19px;font-weight:800;color:var(--p3-orange)">Rencana Lanjutan</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span class="bottom-pill" style="background:var(--p3-bg);border:1.5px solid var(--p3-orange);color:var(--text-main)">Daily Claim Aktif</span>
+          <span class="bottom-pill" style="background:var(--p3-bg);border:1.5px solid var(--p3-orange);color:var(--text-main)">Muzzle Flash</span>
+          <span class="bottom-pill" style="background:var(--p3-bg);border:1.5px solid var(--p3-orange);color:var(--text-main)">Floating Damage</span>
+          <span class="bottom-pill" style="background:var(--p3-bg);border:1.5px solid var(--p3-orange);color:var(--text-main)">Virtual Joystick Android</span>
+          <span class="bottom-pill" style="background:var(--p3-bg);border:1.5px solid var(--p3-orange);color:var(--text-main)">Enemy Runner &amp; Boss</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Desktop Controls Dock -->
+  <div class="desktop-dock">
+    <button class="dock-btn" id="btn-zoom-out" title="Perkecil Zoom (-)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+    </button>
+    <div class="zoom-label" id="zoom-level">100%</div>
+    <button class="dock-btn" id="btn-zoom-in" title="Perbesar Zoom (+)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+    </button>
+    <div class="dock-separator"></div>
+    <button class="dock-btn" id="btn-fit-screen" title="Sesuaikan dengan Layar (Fit to Screen)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg>
+    </button>
+    <button class="dock-btn" id="btn-reset-zoom" title="Reset Ukuran Normal (100%)">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700">1:1</span>
+    </button>
+    <div class="dock-separator"></div>
+    <button class="dock-btn" id="btn-toggle-minimap" title="Buka/Tutup Mini-Map Radar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+    </button>
+  </div>
+
+  <!-- Mini-Map Radar Panel -->
+  <div class="mini-map-panel" id="mini-map-panel">
+    <canvas id="mini-map-canvas" class="mini-map-canvas" width="220" height="143"></canvas>
+    <div id="mini-map-viewport-box" class="mini-map-viewport-box"></div>
+  </div>
+
+  <!-- Detail Node Modal -->
+  <div class="modal-backdrop" id="node-modal">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-badge" id="modal-badge">OB</div>
+        <div class="modal-header-titles">
+          <div class="modal-phase-tag" id="modal-phase-tag">PUSAT</div>
+          <div class="modal-title" id="modal-title">OUTBREAK</div>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal()" title="Tutup (ESC)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body" id="modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="nav-node-btn" id="modal-btn-prev" onclick="prevNode()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Sebelumnya</span>
+        </button>
+        <div style="font-size:13px;font-weight:600;color:var(--text-muted)" id="modal-counter">Node 1 dari 22</div>
+        <button class="nav-node-btn" id="modal-btn-next" onclick="nextNode()">
+          <span>Selanjutnya</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Project Report Modal -->
+  <div class="modal-backdrop" id="report-modal">
+    <div class="modal-box report-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-badge" style="background:var(--core-navy)">📑</div>
+        <div class="modal-header-titles">
+          <div class="modal-phase-tag" style="color:var(--core-navy)">DOKUMEN RESMI PENGEMBANGAN</div>
+          <div class="modal-title">Laporan Perkembangan Proyek Game "OUTBREAK"</div>
+        </div>
+        <button class="modal-close-btn" onclick="closeReportModal()" title="Tutup (ESC)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- Report Tabs Navigation -->
+      <div class="report-tabs">
+        <button class="report-tab-btn active" data-tab="tab-summary">1. Ringkasan &amp; Spesifikasi</button>
+        <button class="report-tab-btn" data-tab="tab-arch">2. Diagram Arsitektur</button>
+        <button class="report-tab-btn" data-tab="tab-phases">3. 6 Fase Siklus Hidup</button>
+        <button class="report-tab-btn" data-tab="tab-weapons">4. Senjata &amp; 5 Misi</button>
+        <button class="report-tab-btn" data-tab="tab-qa">5. Audio Engine &amp; QA</button>
+        <button class="report-tab-btn" data-tab="tab-roadmap">6. Skrip &amp; Roadmap</button>
+      </div>
+
+      <div class="modal-body" id="report-body">
+        <!-- Tab 1: Ringkasan & Spesifikasi -->
+        <div class="report-tab-content" id="tab-summary">
+          <h3 style="font-family:'Baloo 2';font-size:22px;color:var(--core-navy);margin-bottom:8px">1. Ringkasan Eksekutif (Executive Summary)</h3>
+          <p style="margin-bottom:14px">
+            <strong>OUTBREAK</strong> adalah game <em>top-down action survival shooter 2D</em> di mana pemain mengendalikan seorang penyintas (<em>hero</em>) untuk bertahan hidup dari gelombang serangan zombie di area kota pasca-apokaliptik. Game ini menggabungkan aksi refleks cepat (menembak presisi, manuver 8 arah, isi ulang amunisi) dengan progresi ekonomi reward cash serta kustomisasi hero dan 5 variasi senjata.
+          </p>
+          <p style="margin-bottom:14px">
+            Proyek ini dirancang menggunakan pendekatan arsitektur perangkat lunak berbasis komponen (<em>Component-Based Architecture</em>) yang modular, bersih, dan mematuhi prinsip-prinsip <em>clean code</em> di lingkungan <strong>Unity 6 LTS (6000.3.24f1)</strong>.
+          </p>
+
+          <h4 style="margin-top:16px;margin-bottom:8px">Spesifikasi Teknis &amp; Komponen Utama</h4>
+          <div class="modal-table-container">
+            <table class="modal-table">
+              <thead><tr><th>Komponen</th><th>Spesifikasi &amp; Implementasi</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Game Engine</strong></td><td>Unity 6 LTS (Versi 6000.3.24f1)</td></tr>
+                <tr><td><strong>Bahasa Pemrograman</strong></td><td>C# (.NET Framework / Assembly-CSharp)</td></tr>
+                <tr><td><strong>Target Platform</strong></td><td>PC Standalone (Windows) &amp; Arsitektur Siap Porting Mobile (Android)</td></tr>
+                <tr><td><strong>Standar Resolusi</strong></td><td>Full HD (1920 x 1080, Rasio Aspek 16:9 Widescreen, Match 0.5)</td></tr>
+                <tr><td><strong>Sistem Input</strong></td><td>Unity New Input System (<code>UnityEngine.InputSystem</code>)</td></tr>
+                <tr><td><strong>Antarmuka Grafis (UI)</strong></td><td>UGUI &amp; TextMeshPro (TMP) berbasis Signed Distance Field (SDF) Inter-Black</td></tr>
+                <tr><td><strong>Format Audio</strong></td><td>Dual-Layer Audio Engine (File Fisik &amp; Procedural Audio Synthesizer)</td></tr>
+                <tr><td><strong>Manajemen State</strong></td><td>Singleton Persistent Pattern (<code>DontDestroyOnLoad</code>) &amp; <code>PlayerPrefs</code></td></tr>
+                <tr><td><strong>Status Pengembangan</strong></td><td><span style="color:#16a34a;font-weight:700">Feature-Complete</span> (Loop lengkap dari Menu → Gameplay → Reward Cash)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Diagram Arsitektur -->
+        <div class="report-tab-content" id="tab-arch" style="display:none">
+          <h3 style="font-family:'Baloo 2';font-size:22px;color:var(--core-navy);margin-bottom:8px">2. Diagram Arsitektur &amp; Siklus Game</h3>
+          <p style="margin-bottom:14px">Struktur alur eksekusi modular antar-sistem persistent dengan scene MainMenu dan Gameplay:</p>
+          
+          <div style="background:var(--core-bg);border:2px solid var(--core-navy);border-radius:16px;padding:16px;margin-bottom:16px">
+            <svg viewBox="0 0 760 380" width="100%" height="auto" fill="none" style="font-family:'Inter',sans-serif">
+              <!-- Persistent Managers Box -->
+              <rect x="20" y="20" width="720" height="85" rx="12" fill="#fff" stroke="#243b5a" stroke-width="2"/>
+              <text x="35" y="42" font-weight="800" font-size="13" fill="#243b5a">CORE SYSTEM (PERSISTENT SINGLETON - DontDestroyOnLoad)</text>
+              <rect x="35" y="52" width="155" height="42" rx="6" fill="#e8f2fb" stroke="#3b82c4"/>
+              <text x="45" y="70" font-size="11" font-weight="700" fill="#243b5a">GameManager</text>
+              <text x="45" y="85" font-size="9" fill="#555">Koin, Skor, Misi</text>
+
+              <rect x="205" y="52" width="165" height="42" rx="6" fill="#fdeaf0" stroke="#d9577a"/>
+              <text x="215" y="70" font-size="11" font-weight="700" fill="#243b5a">AudioManager</text>
+              <text x="215" y="85" font-size="9" fill="#555">SFX &amp; Synth Engine</text>
+
+              <rect x="385" y="52" width="160" height="42" rx="6" fill="#daf0db" stroke="#4caf50"/>
+              <text x="395" y="70" font-size="11" font-weight="700" fill="#243b5a">SceneController</text>
+              <text x="395" y="85" font-size="9" fill="#555">Transisi Scene</text>
+
+              <rect x="560" y="52" width="160" height="42" rx="6" fill="#f1eafa" stroke="#8b5fc7"/>
+              <text x="570" y="70" font-size="11" font-weight="700" fill="#243b5a">LocalizationManager</text>
+              <text x="570" y="85" font-size="9" fill="#555">Standar Bahasa</text>
+
+              <!-- Connection Lines Down -->
+              <path d="M200,105 L200,140" stroke="#243b5a" stroke-width="2" stroke-dasharray="4"/>
+              <path d="M560,105 L560,140" stroke="#243b5a" stroke-width="2" stroke-dasharray="4"/>
+
+              <!-- MainMenu Box -->
+              <rect x="20" y="140" width="340" height="210" rx="12" fill="#fff" stroke="#8b5fc7" stroke-width="2"/>
+              <text x="35" y="165" font-weight="800" font-size="14" fill="#8b5fc7">SCENE: MainMenu</text>
+              <text x="35" y="185" font-size="11" fill="#444">• MainMenuController (Orkestrator)</text>
+              <text x="35" y="205" font-size="11" fill="#444">• Mission Select Map (Misi 1 s/d 5 berjenjang)</text>
+              <text x="35" y="225" font-size="11" fill="#444">• Heroes &amp; Guns Shop (RectMask2D)</text>
+              <text x="35" y="245" font-size="11" fill="#444">• Daily Rewards (Hadiah 7 Hari)</text>
+              <text x="35" y="265" font-size="11" fill="#444">• Settings (Audio, HD 60/30 FPS)</text>
+              <text x="35" y="285" font-size="11" fill="#444">• How To Play &amp; About Studio</text>
+
+              <!-- Gameplay Box -->
+              <rect x="400" y="140" width="340" height="210" rx="12" fill="#fff" stroke="#1fa5a5" stroke-width="2"/>
+              <text x="415" y="165" font-weight="800" font-size="14" fill="#1fa5a5">SCENE: Gameplay</text>
+              <text x="415" y="185" font-size="11" fill="#444">• PlayerController (Gerak 8 arah, Health)</text>
+              <text x="415" y="205" font-size="11" fill="#444">• PlayerShooting (Moncong peluru, Reload R)</text>
+              <text x="415" y="225" font-size="11" fill="#444">• ZombieSpawner (Wave di luar radius kamera)</text>
+              <text x="415" y="245" font-size="11" fill="#444">• ZombieEnemy AI (FSM: Chase, Attack, Hurt)</text>
+              <text x="415" y="265" font-size="11" fill="#444">• HealthDropItem (Magnet +25 HP)</text>
+              <text x="415" y="285" font-size="11" fill="#444">• GameplayUIController (HUD, Pause, Victory)</text>
+
+              <!-- Flow Arrows between scenes -->
+              <path d="M360,210 L400,210" stroke="#16a34a" stroke-width="3" marker-end="url(#arrow)"/>
+              <text x="363" y="202" font-size="9" font-weight="700" fill="#16a34a">Pilih Misi</text>
+
+              <path d="M400,290 L360,290" stroke="#d9577a" stroke-width="3" marker-end="url(#arrow)"/>
+              <text x="361" y="306" font-size="9" font-weight="700" fill="#d9577a">Victory/Exit</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Tab 3: 6 Fase Pengembangan -->
+        <div class="report-tab-content" id="tab-phases" style="display:none">
+          <h3 style="font-family:'Baloo 2';font-size:22px;color:var(--core-navy);margin-bottom:8px">3. Tahapan Pengembangan 6 Fase (Lifecycle)</h3>
+          
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="padding:12px 16px;border-radius:12px;background:var(--p1-bg);border-left:4px solid var(--p1-blue)">
+              <strong style="color:var(--p1-blue)">Fase 1: Fondasi Sistem &amp; Lingkungan</strong>
+              <p style="font-size:13px;margin-top:4px">Standarisasi struktur direktori <code>Assets/_Project/</code> terbagi atas 6 pilar (Art, Prefabs, Scenes, Scripts, Resources, Editor). Konfigurasi Canvas Scaler 1920x1080 (Match 0.5) dan typography SDF ultra-tajam.</p>
+            </div>
+
+            <div style="padding:12px 16px;border-radius:12px;background:var(--p2-bg);border-left:4px solid var(--p2-green)">
+              <strong style="color:var(--p2-green)">Fase 2: Player Controller &amp; Sistem Tembak</strong>
+              <p style="font-size:13px;margin-top:4px">Pergerakan 8-arah isometrik (sumbu Y x 0.4), animasi sprite 5-state, periode kebal (invulnerability) 1.0s. Sistem tembak akurat dengan Muzzle Offset presisi, reload manual (R) dan otomatis.</p>
+            </div>
+
+            <div style="padding:12px 16px;border-radius:12px;background:var(--p3-bg);border-left:4px solid var(--p3-orange)">
+              <strong style="color:var(--p3-orange)">Fase 3: Kecerdasan Buatan Musuh &amp; Drop</strong>
+              <p style="font-size:13px;margin-top:4px">AI Zombie Finite State Machine (Chasing, Attacking, Hurt &amp; Death). Spawner dinamis radius aman 8-14 unit di luar pandangan kamera. Health pack 25% drop dengan hovering sinus dan magnet radius 2.8 unit.</p>
+            </div>
+
+            <div style="padding:12px 16px;border-radius:12px;background:var(--p4-bg);border-left:4px solid var(--p4-purple)">
+              <strong style="color:var(--p4-purple)">Fase 4: Menu Utama &amp; Sistem Popup</strong>
+              <p style="font-size:13px;margin-top:4px">Peta 5 misi berjenjang dengan level-lock progression. Popup toko karakter &amp; senjata diproteksi RectMask2D 246px. Settings lengkap (SFX, BGM, HD Graphic 60/30 FPS) dan login reward 7 hari.</p>
+            </div>
+
+            <div style="padding:12px 16px;border-radius:12px;background:var(--p5-bg);border-left:4px solid var(--p5-teal)">
+              <strong style="color:var(--p5-teal)">Fase 5: HUD &amp; Pause Flow</strong>
+              <p style="font-size:13px;margin-top:4px">HUD in-game dinamis (Health bar, amunisi, senjata aktif, panel misi). Menu pause 3 tombol simetris (MainMenu, Restart, Resume). Popup Victory dengan klaim cash dan Game Over retry flow.</p>
+            </div>
+
+            <div style="padding:12px 16px;border-radius:12px;background:var(--p6-bg);border-left:4px solid var(--p6-pink)">
+              <strong style="color:var(--p6-pink)">Fase 6: Mesin Audio &amp; Normalisasi Suara</strong>
+              <p style="font-size:13px;margin-top:4px">AudioManager singleton DontDestroyOnLoad. Procedural Audio Synthesizer menghasilkan 4 efek suara matematis tanpa file eksternal. Master loudness dinormalisasi ke 0.95 SFX dan 0.75 BGM.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Senjata & Misi -->
+        <div class="report-tab-content" id="tab-weapons" style="display:none">
+          <h3 style="font-family:'Baloo 2';font-size:22px;color:var(--core-navy);margin-bottom:8px">4. Arsenal 5 Senjata &amp; 5 Misi Berjenjang</h3>
+          
+          <h4 style="margin-top:10px;margin-bottom:6px">Tabel Statistik 5 Jenis Senjata</h4>
+          <div class="modal-table-container">
+            <table class="modal-table">
+              <thead><tr><th>Senjata</th><th>Damage</th><th>Peluru</th><th>Fire Rate</th><th>Harga Cash</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Revolver</strong></td><td>25</td><td>12</td><td>0.35s (Sedang)</td><td><span style="color:#16a34a;font-weight:700">FREE</span></td><td>Terbuka (Default)</td></tr>
+                <tr><td><strong>SMG</strong></td><td>18</td><td>45</td><td>0.12s (Sangat Cepat)</td><td>350</td><td>Terkunci</td></tr>
+                <tr><td><strong>Shotgun</strong></td><td>55</td><td>8</td><td>0.65s (Lambat / Area)</td><td>700</td><td>Terkunci</td></tr>
+                <tr><td><strong>Assault Rifle</strong></td><td>32</td><td>35</td><td>0.18s (Cepat / Sakit)</td><td>1,200</td><td>Terkunci</td></tr>
+                <tr><td><strong>Sniper Rifle</strong></td><td>95</td><td>8</td><td>0.90s (Sangat Fatal)</td><td>2,000</td><td>Terkunci</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4 style="margin-top:20px;margin-bottom:6px">Tabel Konfigurasi 5 Misi Berjenjang</h4>
+          <div class="modal-table-container">
+            <table class="modal-table">
+              <thead><tr><th>Misi</th><th>Tingkat</th><th>Objektif Utama</th><th>Durasi</th><th>Reward</th><th>Akses</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Misi 1</strong></td><td>EASY</td><td>Eliminasi 25 Zombie</td><td>Tanpa Batas</td><td>+150 Cash</td><td>Terbuka</td></tr>
+                <tr><td><strong>Misi 2</strong></td><td>NORMAL</td><td>Eliminasi 35 Zombie</td><td>Bertahan 60s</td><td>+300 Cash</td><td>Buka via Misi 1</td></tr>
+                <tr><td><strong>Misi 3</strong></td><td>HARD</td><td>Eliminasi 50 Zombie</td><td>Bertahan 90s</td><td>+500 Cash</td><td>Buka via Misi 2</td></tr>
+                <tr><td><strong>Misi 4</strong></td><td>EXPERT</td><td>Eliminasi 75 Zombie</td><td>Bertahan 120s</td><td>+800 Cash</td><td>Buka via Misi 3</td></tr>
+                <tr><td><strong>Misi 5</strong></td><td>NIGHTMARE</td><td>Eliminasi 100 Zombie</td><td>Bertahan 180s</td><td>+1,500 Cash</td><td>Buka via Misi 4</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 5: Audio & QA -->
+        <div class="report-tab-content" id="tab-qa" style="display:none">
+          <h3 style="font-family:'Baloo 2';font-size:22px;color:var(--core-navy);margin-bottom:8px">5. Audio Engine &amp; Hasil Pengujian (QA)</h3>
+          
+          <h4 style="margin-top:10px;margin-bottom:6px">Procedural Audio Synthesizer (Kode C#)</h4>
+          <div class="modal-table-container">
+            <table class="modal-table">
+              <thead><tr><th>Suara SFX</th><th>Metode Matematis</th><th>Durasi</th><th>Fungsi</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Click SFX</strong></td><td>Gelombang sinus frekuensi 950 Hz</td><td>60 ms</td><td>Feedback klik tombol UI renyah</td></tr>
+                <tr><td><strong>Gunshot SFX</strong></td><td>Sweep 750 Hz → 100 Hz + White Noise</td><td>180 ms</td><td>Suara tembakan proyektil bertenaga</td></tr>
+                <tr><td><strong>Hurt &amp; Death</strong></td><td>Bass sweep 220 Hz → 60 Hz + Distortion</td><td>250 ms</td><td>Kena cakar zombie &amp; game over</td></tr>
+                <tr><td><strong>BGM Menu</strong></td><td>Synth ambient 4-akord (C - Am - F - G)</td><td>8s / loop</td><td>Alunan musik menu utama menenangkan</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4 style="margin-top:20px;margin-bottom:6px">Hasil Uji Validasi &amp; Quality Assurance</h4>
+          <div class="modal-table-container">
+            <table class="modal-table">
+              <thead><tr><th>Aspek Pengujian</th><th>Metode Uji</th><th>Hasil</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Kompilasi C# Assembly</strong></td><td><code>dotnet build Assembly-CSharp.csproj</code></td><td><span style="color:#16a34a;font-weight:700">100% SUKSES (0 Error)</span></td></tr>
+                <tr><td><strong>Kompilasi Editor</strong></td><td><code>dotnet build Assembly-CSharp-Editor.csproj</code></td><td><span style="color:#16a34a;font-weight:700">100% SUKSES (0 Error)</span></td></tr>
+                <tr><td><strong>Navigasi UI (6 Popup)</strong></td><td>Pengujian transisi beruntun</td><td><span style="color:#16a34a;font-weight:700">Mulus tanpa bug tumpang-tindih</span></td></tr>
+                <tr><td><strong>Penyimpanan Data</strong></td><td>Restart game &amp; cek PlayerPrefs</td><td><span style="color:#16a34a;font-weight:700">Saldo &amp; level unlock tersimpan permanen</span></td></tr>
+                <tr><td><strong>Stabilitas Rasio 16:9</strong></td><td>Monitor laptop, desktop, dan aspect bebas</td><td><span style="color:#16a34a;font-weight:700">UI proporsional dan tidak gepeng</span></td></tr>
+                <tr><td><strong>Audio Gain &amp; Mute</strong></td><td>Toggle switch di settings</td><td><span style="color:#16a34a;font-weight:700">Optimal (SFX 0.95 / BGM 0.75)</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 6: Skrip & Roadmap -->
+        <div class="report-tab-content" id="tab-roadmap" style="display:none">
+          <h3 style="font-family:'Baloo 2';font-size:22px;color:var(--core-navy);margin-bottom:8px">6. Struktur Direktori Skrip &amp; Roadmap Fitur</h3>
+          
+          <pre style="background:var(--core-bg);border:1px solid var(--border-color);border-radius:12px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.5;overflow-x:auto;color:var(--text-main)">Assets/_Project/Scripts/
+├── Core/
+│   ├── GameManager.cs          # Koin, skor, misi terbuka, state ronde
+│   ├── AudioManager.cs         # Audio SFX/BGM &amp; Procedural Synthesizer
+│   ├── SceneController.cs      # Transisi MainMenu &lt;-&gt; Gameplay
+│   └── LocalizationManager.cs  # Standarisasi teks
+├── Player/
+│   ├── PlayerController.cs     # Gerak 8 arah, nyawa hero, invulnerability
+│   ├── PlayerShooting.cs       # Muzzle firepoint, peluru, reload (R)
+│   └── PlayerAnimationController.cs # State animasi sprite hero
+├── Enemies/
+│   ├── ZombieEnemy.cs          # FSM AI musuh, player tracking, attack
+│   ├── ZombieSpawner.cs        # Spawner gelombang radius kamera
+│   └── ZombieAnimationController.cs # Animasi zombie
+├── Weapons/
+│   ├── Bullet.cs               # Raycast/trigger proyektil &amp; damage
+│   └── WeaponData.cs           # Scriptable definition statistik senjata
+├── Gameplay/
+│   └── HealthDropItem.cs       # Magnetisasi otomatis &amp; pemulih 25 HP
+├── UI/
+│   ├── MainMenuController.cs   # Navigasi misi &amp; sinkronisasi saldo
+│   ├── GameplayUIController.cs # HUD darah/peluru, pause, victory
+│   ├── HeroesPopup.cs          # Toko hero &amp; senjata (RectMask2D)
+│   ├── SettingsPopup.cs        # Pengaturan SFX, BGM, HD Graphic (60/30)
+│   ├── HowToPlayPopup.cs       # Panduan kontrol permainan
+│   └── SimplePopup.cs          # Template popup serbaguna
+└── Editor/
+    └── GameDevHubWindow.cs     # Tool utilitas Unity Editor</pre>
+
+          <h4 style="margin-top:18px;margin-bottom:6px">Rencana Pengembangan Lanjutan (Future Work)</h4>
+          <ul>
+            <li><span class="bullet-point" style="background:#f59e0b"></span><div><strong>Daily Claim Streak Aktif:</strong> Siklus klaim 24 jam real-time dengan multiplier hadiah login harian berturut-turut.</div></li>
+            <li><span class="bullet-point" style="background:#f59e0b"></span><div><strong>Muzzle Flash &amp; Partikel Tembakan:</strong> Percikan visual api pada laras dan proyektil tracer saat menembak.</div></li>
+            <li><span class="bullet-point" style="background:#f59e0b"></span><div><strong>Floating Damage Numbers:</strong> Angka hit damage melayang dan indikator serangan kritikal.</div></li>
+            <li><span class="bullet-point" style="background:#f59e0b"></span><div><strong>Virtual Touch Joystick:</strong> Kontrol dual-stick on-screen saat proyek diekspor ke Android/Mobile.</div></li>
+            <li><span class="bullet-point" style="background:#f59e0b"></span><div><strong>Tipe Zombie Spesial:</strong> Fast Runner Zombie (lari cepat) dan Tank Boss Zombie berdarah tebal dengan serangan area gempa.</div></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-header" onclick="window.print()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          <span>Cetak / Simpan PDF Laporan</span>
+        </button>
+        <button class="btn-header primary-action" onclick="closeReportModal()">
+          <span>Selesai Membaca</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Embedded Nodes Dataset (All 22 Nodes)
+    const NODES_DATA = [{"k":"n","ph":"PUSAT (CORE SYSTEM)","t":"OUTBREAK","b":"OB","bl":[["p","OUTBREAK adalah game 2D Top-Down / Isometric-feel Action Survival Shooter yang dikembangkan menggunakan Unity 6 LTS dan bahasa C#. Pemain mengendalikan seorang penyintas (hero) untuk bertahan hidup dari serbuan gelombang zombie di area kota pasca-apokaliptik."],["h","Spesifikasi Inti Permainan"],["tb",[1.2,2],["Parameter","Spesifikasi Teknis"],[["Judul Game","OUTBREAK"],["Genre","2D Top-Down / Isometric-feel Survival Action Shooter"],["Game Engine","Unity 6 LTS (Versi 6000.3.24f1)"],["Bahasa Pemrograman","C# (.NET Framework / Assembly-CSharp)"],["Target Platform","PC Standalone (Windows) & Arsitektur Siap Porting Mobile (Android)"],["Resolusi Acuan","Full HD (1920 x 1080 piksel, Rasio 16:9 Widescreen, Match 0.5)"],["Status Proyek","FEATURE-COMPLETE (Loop utuh: Main Menu → Pilih Misi & Hero → Pertempuran → Victory/Game Over → Reward Cash)"]]],["h","Siklus Alur Permainan (Core Game Loop)"],["ul",[["1. Menu Utama","Pemain memilih misi aktif (Misi 1 s/d 5) serta memilih/membeli hero dan persenjataan di toko terintegrasi."],["2. Gameplay Bertahan","Manuver 8-arah menghindari kepungan zombie, menembak presisi dengan bidikan mouse, dan reload strategi."],["3. Drop & Magnetis","Zombie yang tereliminasi berpeluang menjatuhkan item obat yang otomatis tersedot saat hero mendekat."],["4. Victory / Game Over","Menyelesaikan kuota eliminasi/waktu memberikan koin cash dan membuka misi berikutnya, atau opsi coba lagi (Retry)."]]]]},{"k":"b","ph":"FASE 1 · FONDASI SISTEM","t":"Struktur Folder","b":"6","bl":[["p","Direktori game distandarisasi di bawah Assets/_Project/ yang terbagi ke dalam 6 pilar utama demi mematuhi prinsip Clean Code, kolaborasi tim, dan skalabilitas jangka panjang:"],["ul",[["Art/","Seluruh aset visual 2D: Karakter penyintas, senjata api, lingkungan kota, background jalanan, dan ikon antarmuka UI."],["Prefabs/","Prefab siap pakai: Player hero, variasi musuh Zombie, proyektil Peluru, dan item drop obat darah (Health Pack)."],["Scenes/","Scene terpisah: MainMenu.unity (antarmuka awal & toko) dan Gameplay.unity (arena pertempuran kota)."],["Scripts/","Arsitektur kode C# terbagi modular (Core/, Player/, Enemies/, Weapons/, Gameplay/, UI/)."],["Resources/","Folder bawaan Unity untuk aset dinamis yang dijamin selalu terbawa saat game diekspor ke format EXE/APK (Resources/UI/htp_heal.png)."],["Editor/","Skrip utilitas internal Unity Editor untuk auto-setup dan inspeksi hierarki (GameDevHubWindow.cs)."]]]]},{"k":"b","ph":"FASE 1 · FONDASI SISTEM","t":"Canvas 1920x1080","b":"16:9","bl":[["p","Konfigurasi kanvas resolusi adaptif untuk menjamin tampilan antarmuka game tetap presisi di layar desktop laptop maupun smartphone:"],["ul",[["Canvas Render Mode","Screen Space - Overlay."],["Canvas Scaler","Scale With Screen Size."],["Reference Resolution","1920 x 1080 piksel (Full HD 1080p)."],["Screen Match Mode","Match Width Or Height dengan Match Slider = 0.5 (memberikan proporsi seimbang saat aspect ratio layar bervariasi)."],["Keunggulan & Proteksi","Menghilangkan bug tombol meleset, UI gepeng, teks terpotong, atau elemen meluap di monitor laptop 1366x768, PC 1080p/4K, maupun HP modern 20:9."]]]]},{"k":"b","ph":"FASE 1 · FONDASI SISTEM","t":"Font Inter-Black SDF","b":"SDF","bl":[["p","Implementasi tipografi modern menggunakan TextMeshPro (TMP) berbasis Signed Distance Field (SDF) yang digenerate dari berkas Inter-Black.ttf. Teks tetap ultra-tajam tanpa distorsi atau artefak piksel meski diperbesar dari resolusi 720p hingga monitor 4K UHD."],["h","Hierarki Standar Ukuran Font (Font Size Hierarchy)"],["tb",[1.4,0.9,1.8],["Elemen Antarmuka","Ukuran Font","Contoh Penggunaan"],[["Title / Header Layar","48 - 60 pt","Judul \"OUTBREAK\", Header Popup Menu"],["Sub-Header / Tab","24 - 32 pt","Tab \"HEROES\", \"GUNS\", \"DAILY\""],["Nama Misi & Tombol Utama","20 - 24 pt","Tombol \"MISSION 1\", \"RESUME\", \"RETRY\""],["Statistik & Nilai Koin","16 - 18 pt","Saldo Cash \"+100\", Damage \"25\", HP \"100\""],["Teks Deskripsi / Tutorial","14 - 16 pt","Panduan How To Play, deskripsi senjata"],["Status Badge","11 - 12 pt","Badge \"[LOCKED]\", \"[EQUIPPED]\""]]]]},{"k":"g","ph":"FASE 2 · PLAYER & SENJATA","t":"Gerak 8 Arah","b":"8","bl":[["p","Sistem lokomosi dan kendali karakter penyintas yang responsif menggunakan Unity New Input System:"],["ul",[["Input Kendali","Dukungan Unity New Input System (Keyboard WASD / Arrow Keys) dengan fallback legacy input."],["Kecepatan Gerak","3.5 - 4.5 unit/detik (disesuaikan dengan atribut unik masing-masing hero)."],["Sumbu Isometrik 2.5D","Pergerakan vertikal dikalikan faktor 0.4 pada sumbu Y untuk menciptakan ilusi kedalaman jalanan kota secara visual."],["Rotasi Hadap (Sprite Flip)","Hero otomatis membalikkan arah hadap (Flip X) secara instan berdasarkan arah gerak horizontal."],["5 State Animasi Sprite","Idle (diam), Walk (berjalan), Attack (menembak), Hurt (kena cakar), dan Dead (tumbang)."],["Invulnerability Period","Efek kebal selama 1.0 detik dengan animasi kedip merah 3 kali setelah terkena hit zombie untuk mencegah kematian instan akibat serangan beruntun."]]]]},{"k":"g","ph":"FASE 2 · PLAYER & SENJATA","t":"Tembak Presisi","b":"R","bl":[["p","Mekanika balistik tembakan proyektil presisi dengan perhitungan moncong senjata dan reload dinamis:"],["ul",[["Sistem Bidik Mouse","Arah proyektil melacak posisi kursor mouse secara presisi di ruang 2D (Camera.main.ScreenToWorldPoint)."],["Muzzle Offset Presisi","Posisi spawn peluru diatur tepat di ujung laras senjata (x: ±0.95f, y: 1.15f relatif terhadap kaki hero), menjamin peluru keluar tepat dari moncong senjata di setiap sudut hadap."],["Reload Manual","Tekan tombol keyboard [ R ] kapan saja saat ingin mengisi ulang magazen sebelum amunisi habis."],["Reload Otomatis","Aktif seketika saat peluru di magazen habis (CurrentAmmo == 0) untuk kenyamanan pemain."],["Durasi Reload","Jeda animasi reload 1.2 detik sebelum amunisi terisi penuh kembali."]]]]},{"k":"g","ph":"FASE 2 · PLAYER & SENJATA","t":"5 Jenis Senjata","b":"5","bl":[["p","Perbandingan komprehensif 5 senjata api dengan atribut damage, kapasitas magazen, laju tembak, dan status pembukaannya:"],["tb",[1.3,0.8,0.8,1.4,0.8,1.3],["Senjata","Damage","Peluru","Fire Rate","Harga","Status Awal"],[["Revolver","25","12","0.35s (Sedang)","FREE","Terbuka (Default)"],["SMG","18","45","0.12s (Sangat Cepat)","350 Cash","Terkunci"],["Shotgun","55","8","0.65s (Lambat/Area)","700 Cash","Terkunci"],["Assault Rifle","32","35","0.18s (Cepat/Sakit)","1,200 Cash","Terkunci"],["Sniper Rifle","95","8","0.90s (Sangat Fatal)","2,000 Cash","Terkunci"]]],["p","Pemain dapat membeli dan melengkapi senjata baru melalui tab GUNS di popup toko menggunakan koin reward cash yang dikumpulkan dari misi."]]},{"k":"o","ph":"FASE 3 · MUSUH & DROP","t":"AI Zombie","b":"3","bl":[["p","Kecerdasan buatan musuh berbasis arsitektur Finite State Machine (FSM) 3 status:"],["ul",[["1. Chasing State","AI melacak koordinat posisi hero secara real-time dan bergerak mengejar dengan kecepatan MoveSpeed = 1.8 - 2.8 unit/detik."],["2. Attacking State","Terpicu seketika saat jarak ke hero ≤ 0.8 unit: memutar animasi cakar dan mengurangi HP hero (15 - 25 Damage, Cooldown serang: 1.0 detik)."],["3. Hurt & Death State","Terpicu saat peluru mengenai hitbox zombie; zombie memutar animasi terkena hit dan hancur mati saat HP habis."]]]]},{"k":"o","ph":"FASE 3 · MUSUH & DROP","t":"Spawner Gelombang","b":"∞","bl":[["p","Sistem generator gelombang musuh dinamis yang beradaptasi dengan intensitas pertempuran:"],["ul",[["Radius Spawn Aman","Zombie dimunculkan di luar bidang pandang kamera pemain pada radius minimal 8 unit dan maksimal 14 unit, menciptakan ilusi serbuan zombie tak berujung."],["Skalabilitas Gelombang","Laju spawn bertambah cepat seiring banyaknya zombie yang dieliminasi, menciptakan kurva kesulitan dan tensi permainan yang semakin memuncak."],["Pencegahan Overflow","Batas maksimal jumlah zombie aktif di panggung dibatasi agar performa frame rate tetap stabil di 60 FPS pada semua perangkat."]]]]},{"k":"o","ph":"FASE 3 · MUSUH & DROP","t":"Health Drop Magnet","b":"+","bl":[["p","Mekanik drop item pemulih nyawa darah dengan daya magnetis otomatis:"],["ul",[["Drop Rate","Peluang 25% muncul setiap kali zombie berhasil dieliminasi."],["Efek Pemulihan","Menambah +25 HP darah hero seketika saat terserap."],["Animasi Hovering","Item melayang lembut naik-turun menggunakan fungsi sinus matematika: sin(t × 3) × 0.12 unit."],["Fitur Magnetis Otomatis","Jika HP hero belum penuh dan hero berada dalam radius 2.8 unit, item obat otomatis meluncur dan tersedot ke hero dengan kecepatan 9 unit/detik."],["Proteksi Build Standalone","Ikon obat disimpan di Assets/_Project/Resources/UI/htp_heal.png sehingga tidak akan pernah hilang atau menjadi kotak putih saat diekspor ke format EXE/APK."]]]]},{"k":"p","ph":"FASE 4 · MENU UTAMA","t":"5 Misi Berjenjang","b":"5","bl":[["p","Detail konfigurasi dan objektif 5 tingkatan misi permainan:"],["tb",[0.8,1,1.6,1.2,1.1,1.3],["Misi","Tingkat","Objektif Utama","Durasi Waktu","Hadiah Cash","Status Akses"],[["Misi 1","EASY","Eliminasi 25 Zombie","Tanpa Batas","+150 Cash","Terbuka (Default)"],["Misi 2","NORMAL","Eliminasi 35 Zombie","Bertahan 60 Detik","+300 Cash","Buka via Misi 1"],["Misi 3","HARD","Eliminasi 50 Zombie","Bertahan 90 Detik","+500 Cash","Buka via Misi 2"],["Misi 4","EXPERT","Eliminasi 75 Zombie","Bertahan 120 Detik","+800 Cash","Buka via Misi 3"],["Misi 5","NIGHTMARE","Eliminasi 100 Zombie","Bertahan 180 Detik","+1,500 Cash","Buka via Misi 4"]]],["p","Sistem Kunci Bertingkat: Misi 2 sampai 5 otomatis terkunci ([LOCKED]), dan baru terbuka bertahap setelah pemain berhasil memenangkan misi sebelumnya. Progres tersimpan aman di PlayerPrefs."]]},{"k":"p","ph":"FASE 4 · MENU UTAMA","t":"Heroes & Guns","b":"3","bl":[["p","Sistem toko terintegrasi dengan tab Heroes dan Guns:"],["tb",[1,0.6,0.6,0.6,1.1,1.5],["Hero","HP","ATK","SPD","Harga Cash","Peran Karakter"],[["ALEKK","100","50","70","Gratis (Default)","All-rounder Seimbang"],["ERIKA","120","75","60","500 Cash","Penyerang Agresif"],["HANK","160","90","45","1,000 Cash","Tank Pertahanan Kuat"]]],["ul",[["Proteksi RectMask2D","Tinggi setiap kartu hero dihitung matematis (246 piksel per kartu) dan dikunci dengan komponen RectMask2D, menjamin kartu pas di dalam batas bingkai tanpa pernah meluap melewati garis pembatas bawah."],["Sinkronisasi Real-Time","Saat hero atau senjata dibeli, saldo koin cash langsung diperbarui seketika dan status kartu berubah menjadi [EQUIPPED]."]]]]},{"k":"p","ph":"FASE 4 · MENU UTAMA","t":"Settings & Daily","b":"7","bl":[["h","Menu Pengaturan (Settings Popup)"],["ul",[["Sound Switch","On / Off efek suara tembakan, damage, dan feedback klik tombol UI."],["Music Switch","On / Off musik melodi latar belakang (BGM)."],["HD Graphic Switch","Mengubah profil performa render (QualitySettings): Mode Grafis Tinggi (60 FPS & VSync) vs Hemat Daya (30 FPS)."],["Vibration Switch","On / Off efek getar haptic saat terkena serangan zombie."]]],["h","Menu Daily (7 Hari Hadiah Login)"],["ul",[["Hari 1 s/d Hari 6","+100 Cash per hari."],["Hari 7","+1,000 Mega Cash Reward."],["Tombol Back Terintegrasi","Menutup popup dan mensinkronisasikan saldo cash secara instan ke menu utama."]]]]},{"k":"t","ph":"FASE 5 · HUD & PAUSE","t":"HUD In-Game","b":"2","bl":[["p","Antarmuka visual selama permainan berlangsung yang bersih dan informatif:"],["ul",[["1. HUD Status Pemain (Pojok Kiri Bawah)","Health bar dinamis merah-hitam, teks sisa peluru / kapasitas magazen (misal: 12/12), dan ikon visual senjata aktif yang berganti otomatis sesuai senjata yang dibawa."],["2. HUD Status Misi (Bagian Atas Layar)","Badge misi dinamis: Kill counter eliminasi zombie untuk Misi 1, atau timer mundur waktu bertahan + kill counter untuk Misi 2 s/d 5."]]]]},{"k":"t","ph":"FASE 5 · HUD & PAUSE","t":"Menu Pause","b":"3","bl":[["p","Menjeda waktu permainan (Time.timeScale = 0) dengan antarmuka 3 tombol simetris yang ergonomis:"],["ul",[["Tombol Kiri (x: -115)","Btn_MainMenu (Ikon Rumah) → Menutup gameplay dan kembali ke Menu Utama."],["Tombol Tengah (x: 0)","Btn_Restart (Ikon Repeat) → Mengulang kembali misi saat ini dari awal."],["Tombol Kanan (x: 115)","Btn_Resume (Ikon Play) → Melanjutkan permainan yang sedang berlangsung."]]]]},{"k":"t","ph":"FASE 5 · HUD & PAUSE","t":"Victory & Game Over","b":"2","bl":[["ul",[["Victory Panel","Muncul seketika saat syarat eliminasi/waktu tercapai: menghitung hadiah koin cash, membuka misi berikutnya di PlayerPrefs, dan menyediakan tombol lanjut misi."],["Game Over Panel","Muncul saat hero kehabisan darah (HP = 0); menampilkan jumlah zombie yang dieliminasi dan tombol coba lagi (Retry)."]]]]},{"k":"r","ph":"FASE 6 · MESIN AUDIO","t":"AudioManager","b":"1","bl":[["p","Arsitektur audio terpusat dan berkesinambungan:"],["ul",[["Singleton Persistent","Menggunakan DontDestroyOnLoad sehingga objek audio tetap hidup saat transisi perpindahan antar scene (MainMenu <-> Gameplay)."],["Dua Saluran Terpisah","Menangani saluran bgmSource (musik latar berulang) dan sfxSource (efek suara aksi tembakan/klik) secara independen."],["Transisi Mulus","Musik tidak mengalami interupsi atau terputus secara kasar saat pemain berpindah dari menu ke dalam permainan."]]]]},{"k":"r","ph":"FASE 6 · MESIN AUDIO","t":"Synth Prosedural","b":"4","bl":[["p","Efek suara dihasilkan secara matematis via kode C# tanpa bergantung file audio eksternal yang rawan hilang:"],["tb",[1.3,2.2,1],["Koleksi Suara","Metode Matematis & Frekuensi","Durasi"],[["Click SFX","Gelombang sinus murni frekuensi 950 Hz","60 ms"],["Gunshot SFX","Frequency sweep 750 Hz → 100 Hz + white noise arcade","180 ms"],["Hurt & Death","Gelombang bass 220 Hz → 60 Hz dengan soft distortion","250 ms"],["BGM Menu","Melodi synth ambient 4-akord (C - Am - F - G)","8s / loop"]]]]},{"k":"r","ph":"FASE 6 · MESIN AUDIO","t":"Volume Dinormalisasi","b":".95","bl":[["p","Kalibrasi tingkat kenyaringan suara (Master Loudness):"],["ul",[["Amplitudo SFX (0.95)","Efek suara tembakan dan feedback UI dinaikkan ke level optimal 0.95 untuk hentakan suara yang tegas dan bertenaga."],["Amplitudo BGM (0.75)","Musik latar disetel pada 0.75 agar melodi synth mengalun menenangkan tanpa menenggelamkan suara tembakan aksi."],["Hasil Pengujian","Mengatasi bug suara terlalu pelan sehingga game terdengar seimbang dan jelas pada volume normal speaker komputer/laptop (20% - 30%)."]]]]},{"k":"b","ph":"KOTAK BAWAH · SPESIFIKASI","t":"Teknologi & Engine","b":"TECH","bl":[["p","Fondasi teknologi, pustaka, dan standar arsitektur yang digunakan dalam proyek OUTBREAK:"],["ul",[["Unity 6 LTS (6000.3.24f1)","Game engine versi Long-Term Support dengan stabilitas pipeline render 2D modern."],["C# / .NET SDK","Pemrograman modular berorientasi objek bersih di bawah Assembly-CSharp."],["Unity New Input System","UnityEngine.InputSystem mendukung Keyboard WASD, Mouse Aim, Gamepad, dan Virtual Touch."],["UGUI & TextMeshPro SDF","Custom Signed Distance Field (SDF) typography untuk teks tajam tanpa blur di resolusi apa pun."],["Singleton Pattern","DontDestroyOnLoad untuk GameManager dan AudioManager lintas scene."],["PlayerPrefs Persistence","Enkapsulasi penyimpanan permanen untuk koin cash, senjata yang dibeli, dan misi yang terbuka."],["Cross-Platform Ready","Arsitektur siap build Windows PC Standalone (.exe) dan porting APK Android."]]]]},{"k":"g","ph":"KOTAK BAWAH · PENGUJIAN","t":"Hasil Pengujian & QA","b":"100%","bl":[["p","Hasil pengujian fungsional dan teknis menyeluruh (Quality Assurance):"],["tb",[1.5,1,2],["Kategori Pengujian","Status","Catatan / Metrik"],[["Build C# Assembly","0 Error","100% kompilasi sukses tanpa warning fatal"],["Build Editor Assembly","0 Error","Skrip custom editor GameDevHubWindow berjalan lancar"],["Navigasi UI (6 Popup)","Mulus","Transisi bersih tanpa bug tumpang-tindih (overlay)"],["Data Persistence","Terverifikasi","Saldo Cash dan Misi terbuka tersimpan permanen di PlayerPrefs"],["Rasio Resolusi 16:9","Presisi","Terkunci Full HD 1920x1080, bebas distorsi di ragam monitor"],["Audio SFX & BGM","Optimal","SFX dinormalisasi 0.95 dan BGM 0.75, responsif terhadap switch mute"]]]]},{"k":"o","ph":"KOTAK BAWAH · ROADMAP","t":"Rencana Lanjutan & Fitur Mendatang","b":"ROADMAP","bl":[["p","Fitur-fitur yang dijadwalkan pada siklus pembaruan berikutnya:"],["ul",[["Daily Claim Streak Aktif","Mekanisme klaim hadiah login harian aktif dengan cooldown 24 jam real-time dan bonus berlipat."],["Muzzle Flash Visual FX","Partikel visual semburan api pada ujung laras senjata hero saat menembak proyektil."],["Floating Damage Numbers","Teks angka damage melayang dan pop-up kritikal berwarna saat peluru mengenai zombie."],["Virtual Touch Dual-Stick","Kontrol sentuh joystick virtual di layar saat game dirilis ke platform mobile Android."],["Variasi Musuh Baru","Fast Runner Zombie (lari cepat, HP rendah) dan Tank/Boss Zombie (serangan gempa, HP tebal)."]]]]}];
+
+    // Phase Colors Palette
+    const PHASE_THEMES = {
+      n: { primary: '#243b5a', bg: '#dbeafe', tag: 'PUSAT' },
+      b: { primary: '#3b82c4', bg: '#e8f2fb', tag: 'FASE 1 · FONDASI SISTEM' },
+      g: { primary: '#4caf50', bg: '#ecf7ec', tag: 'FASE 2 · PLAYER & SENJATA' },
+      o: { primary: '#f0a030', bg: '#fff4e0', tag: 'FASE 3 · MUSUH & DROP' },
+      p: { primary: '#8b5fc7', bg: '#f1eafa', tag: 'FASE 4 · MENU UTAMA' },
+      t: { primary: '#1fa5a5', bg: '#e3f6f6', tag: 'FASE 5 · HUD & PAUSE' },
+      r: { primary: '#d9577a', bg: '#fdeaf0', tag: 'FASE 6 · MESIN AUDIO' }
+    };
+
+    // State Variables
+    let currentScale = 1.0;
+    let currentX = 0;
+    let currentY = 0;
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
+    let currentNodeIndex = null;
+    let isSoundEnabled = true;
+    let audioCtx = null;
+
+    // DOM Elements
+    const viewport = document.getElementById('viewport');
+    const stage = document.getElementById('mindmap-stage');
+    const zoomLevelEl = document.getElementById('zoom-level');
+    const nodeModal = document.getElementById('node-modal');
+    const reportModal = document.getElementById('report-modal');
+
+    // ─────────────────────────────────────────────────────────────
+    // Web Audio Procedural Synthesizer (Matches Game AudioManager.cs)
+    // ─────────────────────────────────────────────────────────────
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playProceduralSound(type = 'click') {
+      if (!isSoundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+          // Click SFX: 950 Hz Sine wave for 60ms
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(950, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } else if (type === 'open') {
+          // Open Chime: 523.25 Hz -> 659.25 Hz
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.12);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.18);
+        } else if (type === 'gunshot') {
+          // Gunshot SFX: 750 Hz -> 100 Hz sweep + noise burst
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(750, now);
+          osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.18);
+        }
+      } catch (e) {
+        console.warn('Audio playback not supported or user has not interacted yet', e);
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Desktop Pan & Zoom Viewport Engine
+    // ─────────────────────────────────────────────────────────────
+    function updateTransform(animate = false) {
+      if (animate) {
+        stage.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        setTimeout(() => { stage.style.transition = ''; }, 360);
+      } else {
+        stage.style.transition = '';
+      }
+      stage.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+      zoomLevelEl.textContent = `${Math.round(currentScale * 100)}%`;
+      updateMiniMap();
+    }
+
+    function fitToScreen(animate = true) {
+      const vW = viewport.clientWidth;
+      const vH = viewport.clientHeight;
+      const stageW = 1600;
+      const stageH = 1040;
+
+      // Fit calculation with padding
+      const scaleX = (vW - 60) / stageW;
+      const scaleY = (vH - 60) / stageH;
+      currentScale = Math.min(scaleX, scaleY);
+      // Center position
+      currentX = (vW - stageW * currentScale) / 2;
+      currentY = (vH - stageH * currentScale) / 2;
+
+      updateTransform(animate);
+    }
+
+    function zoomBy(factor, centerX, centerY) {
+      const oldScale = currentScale;
+      let newScale = oldScale * factor;
+      newScale = Math.min(Math.max(newScale, 0.25), 2.8);
+
+      const vW = viewport.clientWidth;
+      const vH = viewport.clientHeight;
+      const cx = centerX !== undefined ? centerX : vW / 2;
+      const cy = centerY !== undefined ? centerY : vH / 2;
+
+      currentX = cx - (cx - currentX) * (newScale / oldScale);
+      currentY = cy - (cy - currentY) * (newScale / oldScale);
+      currentScale = newScale;
+
+      updateTransform(false);
+    }
+
+    // Mouse Pan Events
+    viewport.addEventListener('mousedown', (e) => {
+      // Ignore clicks on buttons/cards
+      if (e.target.closest('.node-btn, .phase-card, .core-cloud-wrapper, .status-card, .legend-card')) {
+        return;
+      }
+      isPanning = true;
+      startX = e.clientX - currentX;
+      startY = e.clientY - currentY;
+      viewport.classList.add('panning');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isPanning) return;
+      currentX = e.clientX - startX;
+      currentY = e.clientY - startY;
+      updateTransform(false);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isPanning) {
+        isPanning = false;
+        viewport.classList.remove('panning');
+      }
+    });
+
+    // Mouse Wheel Zoom
+    viewport.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = viewport.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      const factor = e.deltaY < 0 ? 1.12 : 0.89;
+      zoomBy(factor, mouseX, mouseY);
+    }, { passive: false });
+
+    // Double-click background to fit
+    viewport.addEventListener('dblclick', (e) => {
+      if (e.target.closest('.node-btn, .phase-card, .core-cloud-wrapper, .status-card, .legend-card')) return;
+      playProceduralSound('click');
+      fitToScreen(true);
+    });
+
+    // Touch Support for Trackpads / Mobile
+    let lastTouchDistance = 0;
+    viewport.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        if (e.target.closest('.node-btn, .phase-card, .core-cloud-wrapper, .status-card, .legend-card')) return;
+        isPanning = true;
+        startX = e.touches[0].clientX - currentX;
+        startY = e.touches[0].clientY - currentY;
+      } else if (e.touches.length === 2) {
+        isPanning = false;
+        lastTouchDistance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+      }
+    }, { passive: true });
+
+    viewport.addEventListener('touchmove', (e) => {
+      if (isPanning && e.touches.length === 1) {
+        currentX = e.touches[0].clientX - startX;
+        currentY = e.touches[0].clientY - startY;
+        updateTransform(false);
+      } else if (e.touches.length === 2) {
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        if (lastTouchDistance > 0) {
+          const factor = dist / lastTouchDistance;
+          const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          zoomBy(factor, midX, midY);
+        }
+        lastTouchDistance = dist;
+      }
+    }, { passive: true });
+
+    viewport.addEventListener('touchend', () => {
+      isPanning = false;
+      lastTouchDistance = 0;
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Mini-Map Radar Drawing
+    // ─────────────────────────────────────────────────────────────
+    const miniMapCanvas = document.getElementById('mini-map-canvas');
+    const miniMapCtx = miniMapCanvas.getContext('2d');
+    const miniMapBox = document.getElementById('mini-map-viewport-box');
+
+    function drawMiniMapBase() {
+      miniMapCtx.clearRect(0, 0, 220, 143);
+      const sx = 220 / 1600;
+      const sy = 143 / 1040;
+
+      // Draw center core
+      miniMapCtx.fillStyle = '#3b82c4';
+      miniMapCtx.beginPath();
+      miniMapCtx.arc(800 * sx, 450 * sy, 24 * sx, 0, Math.PI * 2);
+      miniMapCtx.fill();
+
+      // Draw phase blocks
+      const phases = [
+        { x: 385, y: 151, c: '#3b82c4' },
+        { x: 385, y: 411, c: '#4caf50' },
+        { x: 385, y: 671, c: '#f0a030' },
+        { x: 1005, y: 151, c: '#8b5fc7' },
+        { x: 1005, y: 411, c: '#1fa5a5' },
+        { x: 1005, y: 671, c: '#d9577a' }
+      ];
+      phases.forEach(p => {
+        miniMapCtx.fillStyle = p.c;
+        miniMapCtx.fillRect(p.x * sx, p.y * sy, 210 * sx, 68 * sy);
+      });
+
+      // Draw leaf blocks left
+      miniMapCtx.fillStyle = '#64748b';
+      [70, 150, 230, 330, 410, 490, 590, 670, 750].forEach(y => {
+        miniMapCtx.fillRect(40 * sx, y * sy, 310 * sx, 70 * sy);
+        miniMapCtx.fillRect(1250 * sx, y * sy, 310 * sx, 70 * sy);
+      });
+
+      // Bottom cards
+      [40, 560, 1080].forEach(x => {
+        miniMapCtx.fillRect(x * sx, 860 * sy, 480 * sx, 150 * sy);
+      });
+    }
+
+    function updateMiniMap() {
+      const panel = document.getElementById('mini-map-panel');
+      if (!panel.classList.contains('active')) return;
+
+      const sx = 220 / 1600;
+      const sy = 143 / 1040;
+
+      const vW = viewport.clientWidth;
+      const vH = viewport.clientHeight;
+
+      // Compute visible rectangle on stage coords
+      const leftStage = -currentX / currentScale;
+      const topStage = -currentY / currentScale;
+      const widthStage = vW / currentScale;
+      const heightStage = vH / currentScale;
+
+      miniMapBox.style.left = `${Math.max(0, leftStage * sx)}px`;
+      miniMapBox.style.top = `${Math.max(0, topStage * sy)}px`;
+      miniMapBox.style.width = `${Math.min(220, widthStage * sx)}px`;
+      miniMapBox.style.height = `${Math.min(143, heightStage * sy)}px`;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Quick Phase Camera Jump
+    // ─────────────────────────────────────────────────────────────
+    function jumpToArea(areaKey) {
+      playProceduralSound('open');
+      const vW = viewport.clientWidth;
+      const vH = viewport.clientHeight;
+
+      let targetX = 800;
+      let targetY = 520;
+      let targetZoom = Math.min(vW / 1400, vH / 900);
+
+      switch(areaKey) {
+        case 'core':
+          targetX = 800; targetY = 470; targetZoom = 1.05; break;
+        case 'p1':
+          targetX = 350; targetY = 220; targetZoom = 1.15; break;
+        case 'p2':
+          targetX = 350; targetY = 460; targetZoom = 1.15; break;
+        case 'p3':
+          targetX = 350; targetY = 720; targetZoom = 1.15; break;
+        case 'p4':
+          targetX = 1250; targetY = 220; targetZoom = 1.15; break;
+        case 'p5':
+          targetX = 1250; targetY = 460; targetZoom = 1.15; break;
+        case 'p6':
+          targetX = 1250; targetY = 720; targetZoom = 1.15; break;
+        case 'bottom':
+          targetX = 800; targetY = 920; targetZoom = 1.0; break;
+      }
+
+      currentScale = targetZoom;
+      currentX = vW / 2 - targetX * currentScale;
+      currentY = vH / 2 - targetY * currentScale;
+
+      updateTransform(true);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Modal Node Dialogs (All 22 Nodes)
+    // ─────────────────────────────────────────────────────────────
+    function openNode(index) {
+      if (index < 0 || index >= NODES_DATA.length) return;
+      currentNodeIndex = index;
+      const data = NODES_DATA[index];
+      playProceduralSound('open');
+
+      const theme = PHASE_THEMES[data.k] || PHASE_THEMES.b;
+
+      // Header info
+      const badgeEl = document.getElementById('modal-badge');
+      badgeEl.textContent = data.b;
+      badgeEl.style.backgroundColor = theme.primary;
+
+      const tagEl = document.getElementById('modal-phase-tag');
+      tagEl.textContent = data.ph;
+      tagEl.style.color = theme.primary;
+
+      document.getElementById('modal-title').textContent = data.t;
+
+      // Render content blocks
+      const bodyEl = document.getElementById('modal-body');
+      bodyEl.innerHTML = '';
+
+      data.bl.forEach(block => {
+        const type = block[0];
+        if (type === 'p') {
+          const p = document.createElement('p');
+          p.textContent = block[1];
+          bodyEl.appendChild(p);
+        } else if (type === 'h') {
+          const h = document.createElement('h4');
+          h.textContent = block[1];
+          bodyEl.appendChild(h);
+        } else if (type === 'ul') {
+          const ul = document.createElement('ul');
+          block[1].forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span class="bullet-point" style="background:${theme.primary}"></span><div><strong>${item[0]}:</strong> ${item[1]}</div>`;
+            ul.appendChild(li);
+          });
+          bodyEl.appendChild(ul);
+        } else if (type === 'tb') {
+          const widths = block[1];
+          const headers = block[2];
+          const rows = block[3];
+
+          const tableWrap = document.createElement('div');
+          tableWrap.className = 'modal-table-container';
+          const table = document.createElement('table');
+          table.className = 'modal-table';
+
+          // Headers
+          const thead = document.createElement('thead');
+          const trH = document.createElement('tr');
+          headers.forEach(h => {
+            const th = document.createElement('th');
+            th.textContent = h;
+            trH.appendChild(th);
+          });
+          thead.appendChild(trH);
+          table.appendChild(thead);
+
+          // Rows
+          const tbody = document.createElement('tbody');
+          rows.forEach(r => {
+            const tr = document.createElement('tr');
+            r.forEach(cell => {
+              const td = document.createElement('td');
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          tableWrap.appendChild(table);
+          bodyEl.appendChild(tableWrap);
+        }
+      });
+
+      // Special Audio Test button if node is audio or weapons
+      if (index === 17) {
+        const testAudioBox = document.createElement('div');
+        testAudioBox.style.cssText = 'padding:14px;border-radius:12px;background:var(--p6-bg);border:1.5px solid var(--p6-pink);display:flex;align-items:center;justify-content:space-between;margin-top:8px';
+        testAudioBox.innerHTML = `
+          <div>
+            <strong>Tes Generator Audio Langsung:</strong>
+            <div style="font-size:12px;color:var(--text-muted)">Uji coba bunyi SFX Procedural Synth via Web Audio API</div>
+          </div>
+          <button class="btn-header" onclick="playProceduralSound('click')" style="border-color:var(--p6-pink)">
+            <span>🔊 Dengar SFX 950Hz</span>
+          </button>
+        `;
+        bodyEl.appendChild(testAudioBox);
+      } else if (index === 5 || index === 6) {
+        const testGunBox = document.createElement('div');
+        testGunBox.style.cssText = 'padding:14px;border-radius:12px;background:var(--p2-bg);border:1.5px solid var(--p2-green);display:flex;align-items:center;justify-content:space-between;margin-top:8px';
+        testGunBox.innerHTML = `
+          <div>
+            <strong>Preview Suara Tembakan:</strong>
+            <div style="font-size:12px;color:var(--text-muted)">Sweep 750 Hz ke 100 Hz dengan white noise arcade</div>
+          </div>
+          <button class="btn-header" onclick="playProceduralSound('gunshot')" style="border-color:var(--p2-green)">
+            <span>💥 Tes Tembakan</span>
+          </button>
+        `;
+        bodyEl.appendChild(testGunBox);
+      }
+
+      // Counter & prev/next buttons
+      document.getElementById('modal-counter').textContent = `Node ${index + 1} dari ${NODES_DATA.length}`;
+      document.getElementById('modal-btn-prev').disabled = (index === 0);
+      document.getElementById('modal-btn-next').disabled = (index === NODES_DATA.length - 1);
+
+      nodeModal.classList.add('open');
+    }
+
+    function closeModal() {
+      playProceduralSound('click');
+      nodeModal.classList.remove('open');
+      currentNodeIndex = null;
+    }
+
+    function prevNode() {
+      if (currentNodeIndex !== null && currentNodeIndex > 0) {
+        openNode(currentNodeIndex - 1);
+      }
+    }
+
+    function nextNode() {
+      if (currentNodeIndex !== null && currentNodeIndex < NODES_DATA.length - 1) {
+        openNode(currentNodeIndex + 1);
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Report Modal
+    // ─────────────────────────────────────────────────────────────
+    function openReport() {
+      playProceduralSound('open');
+      reportModal.classList.add('open');
+    }
+
+    function closeReportModal() {
+      playProceduralSound('click');
+      reportModal.classList.remove('open');
+    }
+
+    // Report Tabs switching
+    document.querySelectorAll('.report-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        playProceduralSound('click');
+        document.querySelectorAll('.report-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const tabId = btn.getAttribute('data-tab');
+        document.querySelectorAll('.report-tab-content').forEach(c => c.style.display = 'none');
+        const activeContent = document.getElementById(tabId);
+        if (activeContent) activeContent.style.display = 'block';
+      });
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Live Search Functionality
+    // ─────────────────────────────────────────────────────────────
+    const searchBox = document.getElementById('search-box');
+    const searchClear = document.getElementById('search-clear');
+
+    function performSearch(query) {
+      query = query.trim().toLowerCase();
+      const nodeElements = document.querySelectorAll('.node-btn');
+
+      if (!query) {
+        nodeElements.forEach(el => {
+          el.classList.remove('node-match', 'node-dimmed');
+        });
+        searchClear.style.display = 'none';
+        return;
+      }
+
+      searchClear.style.display = 'block';
+      let matchCount = 0;
+      let firstMatchIndex = -1;
+
+      NODES_DATA.forEach((node, i) => {
+        const textContent = (node.t + ' ' + node.ph + ' ' + JSON.stringify(node.bl)).toLowerCase();
+        const matches = textContent.includes(query);
+        const el = document.getElementById('node-btn-' + i);
+
+        if (el) {
+          if (matches) {
+            el.classList.add('node-match');
+            el.classList.remove('node-dimmed');
+            matchCount++;
+            if (firstMatchIndex === -1) firstMatchIndex = i;
+          } else {
+            el.classList.add('node-dimmed');
+            el.classList.remove('node-match');
+          }
+        }
+      });
+
+      // If user presses enter on a single match, auto jump
+      if (matchCount > 0 && firstMatchIndex !== -1) {
+        // Just highlight
+      }
+    }
+
+    searchBox.addEventListener('input', (e) => {
+      performSearch(e.target.value);
+    });
+
+    searchClear.addEventListener('click', () => {
+      searchBox.value = '';
+      performSearch('');
+      searchBox.focus();
+    });
+
+    searchBox.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        searchBox.value = '';
+        performSearch('');
+        searchBox.blur();
+      } else if (e.key === 'Enter') {
+        // Find first match and open it
+        const firstMatch = document.querySelector('.node-btn.node-match');
+        if (firstMatch) {
+          const id = firstMatch.id.replace('node-btn-', '');
+          openNode(parseInt(id, 10));
+        }
+      }
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Keyboard Shortcuts
+    // ─────────────────────────────────────────────────────────────
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (nodeModal.classList.contains('open')) closeModal();
+        if (reportModal.classList.contains('open')) closeReportModal();
+      } else if (e.key === 'ArrowLeft' && nodeModal.classList.contains('open')) {
+        prevNode();
+      } else if (e.key === 'ArrowRight' && nodeModal.classList.contains('open')) {
+        nextNode();
+      } else if (e.key === 'f' && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') {
+        fitToScreen(true);
+      } else if (e.key === '0' && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') {
+        currentScale = 1.0;
+        updateTransform(true);
+      }
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Dock & Header Event Handlers
+    // ─────────────────────────────────────────────────────────────
+    document.getElementById('btn-zoom-in').addEventListener('click', () => {
+      playProceduralSound('click');
+      zoomBy(1.2);
+    });
+    document.getElementById('btn-zoom-out').addEventListener('click', () => {
+      playProceduralSound('click');
+      zoomBy(0.83);
+    });
+    document.getElementById('btn-fit-screen').addEventListener('click', () => {
+      playProceduralSound('click');
+      fitToScreen(true);
+    });
+    document.getElementById('btn-reset-zoom').addEventListener('click', () => {
+      playProceduralSound('click');
+      currentScale = 1.0;
+      updateTransform(true);
+    });
+
+    // Mini-map toggle
+    const miniMapPanel = document.getElementById('mini-map-panel');
+    document.getElementById('btn-toggle-minimap').addEventListener('click', () => {
+      playProceduralSound('click');
+      miniMapPanel.classList.toggle('active');
+      if (miniMapPanel.classList.contains('active')) {
+        drawMiniMapBase();
+        updateMiniMap();
+      }
+    });
+
+    // Header Pills Navigation
+    document.getElementById('phase-pills').addEventListener('click', (e) => {
+      const pill = e.target.closest('.nav-pill');
+      if (!pill) return;
+      const jumpKey = pill.getAttribute('data-jump');
+      jumpToArea(jumpKey);
+    });
+
+    document.getElementById('btn-brand').addEventListener('click', () => {
+      jumpToArea('core');
+    });
+
+    // Full Report button
+    document.getElementById('btn-open-report').addEventListener('click', openReport);
+
+    // Toggle Sound Button
+    const btnToggleSound = document.getElementById('btn-toggle-sound');
+    const iconSoundOn = document.getElementById('icon-sound-on');
+    const iconSoundOff = document.getElementById('icon-sound-off');
+
+    btnToggleSound.addEventListener('click', () => {
+      isSoundEnabled = !isSoundEnabled;
+      if (isSoundEnabled) {
+        iconSoundOn.style.display = 'block';
+        iconSoundOff.style.display = 'none';
+        playProceduralSound('click');
+      } else {
+        iconSoundOn.style.display = 'none';
+        iconSoundOff.style.display = 'block';
+      }
+    });
+
+    // Toggle Theme Button (Dark / Light)
+    const btnToggleTheme = document.getElementById('btn-toggle-theme');
+    const iconThemeSun = document.getElementById('icon-theme-sun');
+    const iconThemeMoon = document.getElementById('icon-theme-moon');
+
+    btnToggleTheme.addEventListener('click', () => {
+      playProceduralSound('click');
+      document.body.classList.toggle('dark-theme');
+      const isDark = document.body.classList.contains('dark-theme');
+      if (isDark) {
+        iconThemeSun.style.display = 'none';
+        iconThemeMoon.style.display = 'block';
+      } else {
+        iconThemeSun.style.display = 'block';
+        iconThemeMoon.style.display = 'none';
+      }
+      if (miniMapPanel.classList.contains('active')) {
+        drawMiniMapBase();
+      }
+    });
+
+    // Toggle Fullscreen
+    document.getElementById('btn-toggle-fullscreen').addEventListener('click', () => {
+      playProceduralSound('click');
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.warn(err));
+      } else {
+        document.exitFullscreen().catch(err => console.warn(err));
+      }
+    });
+
+    // Modal background click to close
+    nodeModal.addEventListener('click', (e) => {
+      if (e.target === nodeModal) closeModal();
+    });
+    reportModal.addEventListener('click', (e) => {
+      if (e.target === reportModal) closeReportModal();
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Initial Load & Auto-Fit
+    // ─────────────────────────────────────────────────────────────
+    window.addEventListener('resize', () => {
+      fitToScreen(false);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fitToScreen(false);
+      drawMiniMapBase();
+      console.log('Outbreak Mind Map application loaded successfully.');
+    });
+  </script>
+</body>
+</html>
